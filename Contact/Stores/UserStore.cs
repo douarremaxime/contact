@@ -183,11 +183,39 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<IdentityResult> UpdateAsync(
+        public async Task<IdentityResult> UpdateAsync(
             IdentityUser<int> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "UPDATE users " +
+                "SET (username, normalized_username, password_hash) " +
+                "= (($1), ($2), ($3)) " +
+                "WHERE id = ($4)";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = user.UserName },
+                    new() { Value = user.NormalizedUserName },
+                    new() { Value = user.PasswordHash },
+                    new() { Value = user.Id }
+                }
+            };
+
+            var rows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+            if (rows > 0)
+                return IdentityResult.Success;
+
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "UserStoreError",
+                Description = $"Could not update user {user.UserName}."
+            });
         }
 
         /// <inheritdoc/>
