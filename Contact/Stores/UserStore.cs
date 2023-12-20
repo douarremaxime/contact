@@ -8,7 +8,7 @@ namespace Contact.Stores
     /// Implements a <see cref="IUserPasswordStore{TUser}"/> 
     /// for <see cref="IdentityUser{TKey}"/>.
     /// </summary>
-    public class UserStore : IUserPasswordStore<IdentityUser<int>>
+    public class UserStore : IUserPasswordStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -25,7 +25,7 @@ namespace Contact.Stores
         #region IUserStore
         /// <inheritdoc/>
         public async Task<string> GetUserIdAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -54,7 +54,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task<string?> GetUserNameAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -62,7 +62,7 @@ namespace Contact.Stores
 
             var sql = "SELECT username FROM users WHERE id = ($1)";
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -83,7 +83,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task SetUserNameAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             string? userName,
             CancellationToken cancellationToken)
         {
@@ -100,7 +100,7 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -120,7 +120,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task<string?> GetNormalizedUserNameAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -128,7 +128,7 @@ namespace Contact.Stores
 
             var sql = "SELECT normalized_username FROM users WHERE id = ($1)";
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -149,7 +149,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task SetNormalizedUserNameAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             string? normalizedName,
             CancellationToken cancellationToken)
         {
@@ -166,7 +166,7 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -186,7 +186,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task<IdentityResult> CreateAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -236,7 +236,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task<IdentityResult> UpdateAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -264,7 +264,7 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -295,7 +295,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public async Task<IdentityResult> DeleteAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             await using var connection =
@@ -303,7 +303,7 @@ namespace Contact.Stores
 
             var sql = "DELETE FROM users WHERE id = ($1)";
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -327,11 +327,11 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public async Task<IdentityUser<int>?> FindByIdAsync(
+        public async Task<IdentityUser<long>?> FindByIdAsync(
             string userId,
             CancellationToken cancellationToken)
         {
-            var parsedUserId = int.Parse(userId);
+            var parsedUserId = long.Parse(userId);
 
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -339,7 +339,7 @@ namespace Contact.Stores
             var sql = "SELECT username, normalized_username, password_hash " +
                 "FROM users WHERE id = ($1)";
 
-            var idParam = new NpgsqlParameter<int>
+            var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = parsedUserId,
                 NpgsqlDbType = NpgsqlDbType.Bigint
@@ -355,7 +355,7 @@ namespace Contact.Stores
 
             if (await reader.ReadAsync(cancellationToken))
             {
-                return new IdentityUser<int>
+                return new IdentityUser<long>
                 {
                     Id = parsedUserId,
                     UserName = reader.GetString(0),
@@ -368,7 +368,7 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<IdentityUser<int>?> FindByNameAsync(
+        public Task<IdentityUser<long>?> FindByNameAsync(
             string normalizedUserName,
             CancellationToken cancellationToken)
         {
@@ -379,7 +379,7 @@ namespace Contact.Stores
         #region IUserPasswordStore
         /// <inheritdoc/>
         public Task SetPasswordHashAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             string? passwordHash,
             CancellationToken cancellationToken)
         {
@@ -388,7 +388,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public Task<string?> GetPasswordHashAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -396,7 +396,7 @@ namespace Contact.Stores
 
         /// <inheritdoc/>
         public Task<bool> HasPasswordAsync(
-            IdentityUser<int> user,
+            IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
