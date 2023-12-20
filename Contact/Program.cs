@@ -5,6 +5,11 @@ builder.Services.AddProblemDetails();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+var connectionString = builder.Configuration.GetConnectionString("Npgsql") 
+    ?? throw new ArgumentException("Missing Npgsql connection string.");
+
+builder.Services.AddNpgsqlDataSource(connectionString);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
