@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Npgsql;
 
 namespace Contact.Stores
 {
@@ -8,13 +9,43 @@ namespace Contact.Stores
     /// </summary>
     public class UserStore : IUserPasswordStore<IdentityUser<int>>
     {
+        /// <summary>
+        /// Data source.
+        /// </summary>
+        private readonly NpgsqlDataSource _dataSource;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="dataSource">Data source.</param>
+        public UserStore(NpgsqlDataSource dataSource) =>
+            _dataSource = dataSource;
+
         #region IUserStore
         /// <inheritdoc/>
-        public Task<string> GetUserIdAsync(
+        public async Task<string> GetUserIdAsync(
             IdentityUser<int> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "SELECT id FROM users WHERE username = ($1)";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = user.UserName }
+        }
+            };
+
+            await using var reader =
+                await command.ExecuteReaderAsync(cancellationToken);
+
+            await reader.ReadAsync(cancellationToken);
+
+            return reader.GetString(0);
         }
 
         /// <inheritdoc/>
