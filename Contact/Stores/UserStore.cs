@@ -446,11 +446,32 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<string?> GetPasswordHashAsync(
+        public async Task<string?> GetPasswordHashAsync(
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "SELECT password_hash FROM users WHERE id = ($1)";
+
+            var idParam = new NpgsqlParameter<long>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters = { idParam }
+            };
+
+            await using var reader =
+                await command.ExecuteReaderAsync(cancellationToken);
+
+            await reader.ReadAsync(cancellationToken);
+
+            return reader.GetString(0);
         }
 
         /// <inheritdoc/>
