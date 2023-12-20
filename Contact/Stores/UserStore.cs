@@ -479,7 +479,8 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            // All users have a password.
+            return Task.FromResult(true);
         }
         #endregion
 
