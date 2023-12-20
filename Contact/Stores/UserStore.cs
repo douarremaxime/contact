@@ -100,11 +100,29 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<string?> GetNormalizedUserNameAsync(
+        public async Task<string?> GetNormalizedUserNameAsync(
             IdentityUser<int> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "SELECT normalized_username FROM users WHERE id = ($1)";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = user.Id }
+                }
+            };
+
+            await using var reader =
+                await command.ExecuteReaderAsync(cancellationToken);
+
+            await reader.ReadAsync(cancellationToken);
+
+            return reader.GetString(0);
         }
 
         /// <inheritdoc/>
