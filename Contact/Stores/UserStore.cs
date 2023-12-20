@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace Contact.Stores
 {
@@ -32,12 +33,15 @@ namespace Contact.Stores
 
             var sql = "SELECT id FROM users WHERE normalized_username = ($1)";
 
+            var normalizedUserNameParam = new NpgsqlParameter
+            {
+                Value = user.NormalizedUserName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
-                Parameters =
-                {
-                    new() { Value = user.NormalizedUserName }
-                }
+                Parameters = { normalizedUserNameParam }
             };
 
             await using var reader =
@@ -58,12 +62,15 @@ namespace Contact.Stores
 
             var sql = "SELECT username FROM users WHERE id = ($1)";
 
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
-                Parameters =
-                {
-                    new() { Value = user.Id }
-                }
+                Parameters = { idParam }
             };
 
             await using var reader =
@@ -87,12 +94,24 @@ namespace Contact.Stores
 
             var sql = "UPDATE users SET username = ($1) WHERE id = ($2)";
 
+            var userNameParam = new NpgsqlParameter
+            {
+                Value = userName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
-                    new() { Value = userName },
-                    new() { Value = user.Id }
+                    userNameParam,
+                    idParam
                 }
             };
 
@@ -109,12 +128,15 @@ namespace Contact.Stores
 
             var sql = "SELECT normalized_username FROM users WHERE id = ($1)";
 
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
-                Parameters =
-                {
-                    new() { Value = user.Id }
-                }
+                Parameters = { idParam }
             };
 
             await using var reader =
@@ -138,12 +160,24 @@ namespace Contact.Stores
 
             var sql = "UPDATE users SET normalized_username = ($1) WHERE id = ($2)";
 
+            var normalizedUserNameParam = new NpgsqlParameter
+            {
+                Value = normalizedName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
-                    new() { Value = normalizedName },
-                    new() { Value = user.Id }
+                    normalizedUserNameParam,
+                    idParam
                 }
             };
 
@@ -160,13 +194,31 @@ namespace Contact.Stores
 
             var sql = "INSERT INTO users VALUES (DEFAULT, ($1), ($2), ($3))";
 
+            var userNameParam = new NpgsqlParameter
+            {
+                Value = user.UserName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var normalizedUserNameParam = new NpgsqlParameter
+            {
+                Value = user.NormalizedUserName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var passwordHashParam = new NpgsqlParameter
+            {
+                Value = user.PasswordHash,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
-                    new() { Value = user.UserName },
-                    new() { Value = user.NormalizedUserName },
-                    new() { Value = user.PasswordHash }
+                    userNameParam,
+                    normalizedUserNameParam,
+                    passwordHashParam
                 }
             };
 
@@ -191,18 +243,41 @@ namespace Contact.Stores
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
             var sql = "UPDATE users " +
-                "SET (username, normalized_username, password_hash) " +
-                "= (($1), ($2), ($3)) " +
+                "SET username = ($1), normalized_username = ($2), password_hash = ($3) " +
                 "WHERE id = ($4)";
+
+            var userNameParam = new NpgsqlParameter
+            {
+                Value = user.UserName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var normalizedUserNameParam = new NpgsqlParameter
+            {
+                Value = user.NormalizedUserName,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var passwordHashParam = new NpgsqlParameter
+            {
+                Value = user.PasswordHash,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
 
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
-                    new() { Value = user.UserName },
-                    new() { Value = user.NormalizedUserName },
-                    new() { Value = user.PasswordHash },
-                    new() { Value = user.Id }
+                    userNameParam,
+                    normalizedUserNameParam,
+                    passwordHashParam,
+                    idParam
                 }
             };
 
@@ -228,12 +303,15 @@ namespace Contact.Stores
 
             var sql = "DELETE FROM users WHERE id = ($1)";
 
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
-                Parameters =
-                {
-                    new() { Value = user.Id }
-                }
+                Parameters = { idParam }
             };
 
             var rows = await command.ExecuteNonQueryAsync(cancellationToken);
