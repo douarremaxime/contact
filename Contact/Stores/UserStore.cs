@@ -219,11 +219,33 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<IdentityResult> DeleteAsync(
+        public async Task<IdentityResult> DeleteAsync(
             IdentityUser<int> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "DELETE FROM users WHERE id = ($1)";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = user.Id }
+                }
+            };
+
+            var rows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+            if (rows > 0)
+                return IdentityResult.Success;
+
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "UserStoreError",
+                Description = $"Could not delete user {user.UserName}."
+            });
         }
 
         /// <inheritdoc/>
