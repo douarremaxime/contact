@@ -177,7 +177,7 @@ namespace Contact.Stores
 
             return IdentityResult.Failed(new IdentityError
             {
-                Code = "DatabaseError",
+                Code = "UserStoreError",
                 Description = $"Could not insert user {user.UserName}."
             });
         }
