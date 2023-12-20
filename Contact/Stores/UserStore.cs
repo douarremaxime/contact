@@ -151,11 +151,35 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<IdentityResult> CreateAsync(
+        public async Task<IdentityResult> CreateAsync(
             IdentityUser<int> user,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "INSERT INTO users VALUES (DEFAULT, ($1), ($2), ($3))";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = user.UserName },
+                    new() { Value = user.NormalizedUserName },
+                    new() { Value = user.PasswordHash }
+                }
+            };
+
+            var rows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+            if (rows > 0)
+                return IdentityResult.Success;
+
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "DatabaseError",
+                Description = $"Could not insert user {user.UserName}."
+            });
         }
 
         /// <inheritdoc/>
