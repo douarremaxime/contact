@@ -409,12 +409,40 @@ namespace Contact.Stores
 
         #region IUserPasswordStore
         /// <inheritdoc/>
-        public Task SetPasswordHashAsync(
+        public async Task SetPasswordHashAsync(
             IdentityUser<long> user,
             string? passwordHash,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "UPDATE users SET password_hash = ($1) WHERE id = ($2)";
+
+            var passwordHashParam = new NpgsqlParameter
+            {
+                Value = passwordHash,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
+            var idParam = new NpgsqlParameter<long>
+            {
+                TypedValue = user.Id,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    passwordHash,
+                    idParam
+                }
+            };
+
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
