@@ -327,11 +327,44 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<IdentityUser<int>?> FindByIdAsync(
+        public async Task<IdentityUser<int>?> FindByIdAsync(
             string userId,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var parsedUserId = int.Parse(userId);
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "SELECT username, normalized_username, password_hash " +
+                "FROM users WHERE id = ($1)";
+
+            var idParam = new NpgsqlParameter<int>
+            {
+                TypedValue = parsedUserId,
+                NpgsqlDbType = NpgsqlDbType.Bigint
+            };
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters = { idParam }
+            };
+
+            await using var reader =
+                await command.ExecuteReaderAsync(cancellationToken);
+
+            if (await reader.ReadAsync(cancellationToken))
+            {
+                return new IdentityUser<int>
+                {
+                    Id = parsedUserId,
+                    UserName = reader.GetString(0),
+                    NormalizedUserName = reader.GetString(1),
+                    PasswordHash = reader.GetString(2)
+                };
+            }
+
+            return null;
         }
 
         /// <inheritdoc/>
