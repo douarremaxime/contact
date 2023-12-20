@@ -37,7 +37,7 @@ namespace Contact.Stores
                 Parameters =
                 {
                     new() { Value = user.UserName }
-        }
+                }
             };
 
             await using var reader =
@@ -75,12 +75,28 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task SetUserNameAsync(
+        public async Task SetUserNameAsync(
             IdentityUser<int> user,
             string? userName,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            ArgumentException.ThrowIfNullOrWhiteSpace(userName);
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            var sql = "UPDATE users SET username = ($1) WHERE id = ($2)";
+
+            await using var command = new NpgsqlCommand(sql, connection)
+            {
+                Parameters =
+                {
+                    new() { Value = userName },
+                    new() { Value = user.Id }
+                }
+            };
+
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
