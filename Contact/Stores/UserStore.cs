@@ -30,13 +30,13 @@ namespace Contact.Stores
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
-            var sql = "SELECT id FROM users WHERE username = ($1)";
+            var sql = "SELECT id FROM users WHERE normalized_username = ($1)";
 
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
-                    new() { Value = user.UserName }
+                    new() { Value = user.NormalizedUserName }
                 }
             };
 
