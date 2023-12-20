@@ -8,7 +8,7 @@ namespace Contact.Stores
     /// Implements a <see cref="IUserPasswordStore{TUser}"/> 
     /// for <see cref="IdentityUser{TKey}"/>.
     /// </summary>
-    public class UserStore : IUserPasswordStore<IdentityUser<long>>
+    public sealed class UserStore : IUserPasswordStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -488,7 +488,9 @@ namespace Contact.Stores
         /// <inheritdoc/>
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // Nothing to do here.
+            // NpgsqlDataSource is long-lived.
+            // NpgsqlConnections are all declared with the using statement.
         }
         #endregion
     }
