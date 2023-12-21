@@ -1,16 +1,34 @@
+using Contact.Stores;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddProblemDetails();
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser<long>>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireDigit = false;
+
+    options.Lockout.AllowedForNewUsers = false;
+});
+
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build());
 
 var connectionString = builder.Configuration.GetConnectionString("Npgsql") 
     ?? throw new ArgumentException("Missing Npgsql connection string.");
 
 builder.Services.AddNpgsqlDataSource(connectionString);
+
+builder.Services.AddScoped<IUserStore<IdentityUser<long>>, UserStore>();
 
 var app = builder.Build();
 
