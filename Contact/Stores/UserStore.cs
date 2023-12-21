@@ -71,40 +71,15 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public async Task SetNormalizedUserNameAsync(
+        public Task SetNormalizedUserNameAsync(
             IdentityUser<long> user,
             string? normalizedName,
             CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(normalizedName);
-
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
-            var sql = "UPDATE users SET normalized_username = ($1) WHERE id = ($2)";
-
-            var normalizedUserNameParam = new NpgsqlParameter
-            {
-                Value = normalizedName,
-                NpgsqlDbType = NpgsqlDbType.Varchar
-            };
-
-            var idParam = new NpgsqlParameter<long>
-            {
-                TypedValue = user.Id,
-                NpgsqlDbType = NpgsqlDbType.Bigint
-            };
-
-            await using var command = new NpgsqlCommand(sql, connection)
-            {
-                Parameters =
-                {
-                    normalizedUserNameParam,
-                    idParam
-                }
-            };
-
-            await command.ExecuteNonQueryAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.NormalizedUserName = normalizedName;
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
