@@ -49,40 +49,15 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public async Task SetUserNameAsync(
+        public Task SetUserNameAsync(
             IdentityUser<long> user,
             string? userName,
             CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(userName);
-
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
-            var sql = "UPDATE users SET username = ($1) WHERE id = ($2)";
-
-            var userNameParam = new NpgsqlParameter
-            {
-                Value = userName,
-                NpgsqlDbType = NpgsqlDbType.Varchar
-            };
-
-            var idParam = new NpgsqlParameter<long>
-            {
-                TypedValue = user.Id,
-                NpgsqlDbType = NpgsqlDbType.Bigint
-            };
-
-            await using var command = new NpgsqlCommand(sql, connection)
-            {
-                Parameters =
-                {
-                    userNameParam,
-                    idParam
-                }
-            };
-
-            await command.ExecuteNonQueryAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.UserName = userName;
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
