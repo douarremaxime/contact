@@ -29,32 +29,13 @@ namespace Contact.Stores
 
         #region IUserStore
         /// <inheritdoc/>
-        public async Task<string> GetUserIdAsync(
+        public Task<string> GetUserIdAsync(
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
-            var sql = "SELECT id FROM users WHERE normalized_username = ($1)";
-
-            var normalizedUserNameParam = new NpgsqlParameter
-            {
-                Value = user.NormalizedUserName,
-                NpgsqlDbType = NpgsqlDbType.Varchar
-            };
-
-            await using var command = new NpgsqlCommand(sql, connection)
-            {
-                Parameters = { normalizedUserNameParam }
-            };
-
-            await using var reader =
-                await command.ExecuteReaderAsync(cancellationToken);
-
-            await reader.ReadAsync(cancellationToken);
-
-            return reader.GetString(0);
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.Id.ToString());
         }
 
         /// <inheritdoc/>
