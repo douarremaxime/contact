@@ -16,6 +16,11 @@ namespace Contact.Stores
         private readonly NpgsqlDataSource _dataSource;
 
         /// <summary>
+        /// true if Dispose() was called, false otherwise.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="dataSource">Data source.</param>
@@ -485,13 +490,10 @@ namespace Contact.Stores
         #endregion
 
         #region IDisposable
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            // Nothing to do here.
-            // NpgsqlDataSource is long-lived.
-            // NpgsqlConnections are all declared with the using statement.
-        }
+        /// <summary>
+        /// Dispose the store.
+        /// </summary>
+        public void Dispose() => _disposed = true;
         #endregion
     }
 }
