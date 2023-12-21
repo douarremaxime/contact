@@ -39,32 +39,13 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public async Task<string?> GetUserNameAsync(
+        public Task<string?> GetUserNameAsync(
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
-            var sql = "SELECT username FROM users WHERE id = ($1)";
-
-            var idParam = new NpgsqlParameter<long>
-            {
-                TypedValue = user.Id,
-                NpgsqlDbType = NpgsqlDbType.Bigint
-            };
-
-            await using var command = new NpgsqlCommand(sql, connection)
-            {
-                Parameters = { idParam }
-            };
-
-            await using var reader =
-                await command.ExecuteReaderAsync(cancellationToken);
-
-            await reader.ReadAsync(cancellationToken);
-
-            return reader.GetString(0);
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.UserName);
         }
 
         /// <inheritdoc/>
