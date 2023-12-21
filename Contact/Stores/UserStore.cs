@@ -333,8 +333,9 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            // All users have a password.
-            return Task.FromResult(true);
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.PasswordHash is not null);
         }
         #endregion
 
