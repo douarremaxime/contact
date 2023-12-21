@@ -5,8 +5,7 @@ using NpgsqlTypes;
 namespace Contact.Stores
 {
     /// <summary>
-    /// Implements a <see cref="IUserPasswordStore{TUser}"/> 
-    /// for <see cref="IdentityUser{TKey}"/>.
+    /// User store.
     /// </summary>
     public sealed class UserStore : IUserPasswordStore<IdentityUser<long>>
     {
