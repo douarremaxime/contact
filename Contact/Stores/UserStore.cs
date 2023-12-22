@@ -91,7 +91,8 @@ namespace Contact.Stores
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
-            var sql = "INSERT INTO users VALUES (DEFAULT, ($1), ($2), ($3))";
+            var sql = "INSERT INTO users " +
+                "VALUES (DEFAULT, ($1), ($2), ($3), ($4))";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -111,13 +112,20 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
+            var securityStampParam = new NpgsqlParameter
+            {
+                Value = user.SecurityStamp,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
                 {
                     userNameParam,
                     normalizedUserNameParam,
-                    passwordHashParam
+                    passwordHashParam,
+                    securityStampParam
                 }
             };
 
@@ -142,8 +150,12 @@ namespace Contact.Stores
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
             var sql = "UPDATE users " +
-                "SET username = ($1), normalized_username = ($2), password_hash = ($3) " +
-                "WHERE id = ($4)";
+                "SET " +
+                    "username = ($1), " +
+                    "normalized_username = ($2), " +
+                    "password_hash = ($3), " +
+                    "security_stamp = ($4) " +
+                "WHERE id = ($5)";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -163,6 +175,12 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
+            var securityStampParam = new NpgsqlParameter
+            {
+                Value = user.SecurityStamp,
+                NpgsqlDbType = NpgsqlDbType.Varchar
+            };
+
             var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
@@ -176,6 +194,7 @@ namespace Contact.Stores
                     userNameParam,
                     normalizedUserNameParam,
                     passwordHashParam,
+                    securityStampParam,
                     idParam
                 }
             };
@@ -235,7 +254,11 @@ namespace Contact.Stores
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
-            var sql = "SELECT username, normalized_username, password_hash " +
+            var sql = "SELECT " +
+                    "username, " +
+                    "normalized_username, " +
+                    "password_hash, " +
+                    "security_stamp " +
                 "FROM users WHERE id = ($1)";
 
             var idParam = new NpgsqlParameter<long>
@@ -259,7 +282,8 @@ namespace Contact.Stores
                     Id = parsedUserId,
                     UserName = reader.GetString(0),
                     NormalizedUserName = reader.GetString(1),
-                    PasswordHash = reader.GetString(2)
+                    PasswordHash = reader.GetString(2),
+                    SecurityStamp = reader.GetString(3),
                 };
             }
 
@@ -274,7 +298,11 @@ namespace Contact.Stores
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
-            var sql = "SELECT id, username, password_hash " +
+            var sql = "SELECT " +
+                    "id, " +
+                    "username, " +
+                    "password_hash, " +
+                    "security_stamp " +
                 "FROM users WHERE normalized_username = ($1)";
 
             var normalizedUserNameParam = new NpgsqlParameter
@@ -298,7 +326,8 @@ namespace Contact.Stores
                     Id = reader.GetInt64(0),
                     UserName = reader.GetString(1),
                     NormalizedUserName = normalizedUserName,
-                    PasswordHash = reader.GetString(2)
+                    PasswordHash = reader.GetString(2),
+                    SecurityStamp = reader.GetString(3),
                 };
             }
 
