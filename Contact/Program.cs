@@ -16,6 +16,13 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser<long>>(options =>
     options.Password.RequireDigit = false;
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/access-denied.html";
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.LoginPath = "/signin.html";
+});
+
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
