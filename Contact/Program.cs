@@ -14,8 +14,6 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser<long>>(options =>
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireDigit = false;
-
-    options.Lockout.AllowedForNewUsers = false;
 });
 
 builder.Services.AddAuthorizationBuilder()
