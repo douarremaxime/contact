@@ -7,7 +7,9 @@ namespace Contact.Stores
     /// <summary>
     /// User store.
     /// </summary>
-    public sealed class UserStore : IUserPasswordStore<IdentityUser<long>>
+    public sealed class UserStore :
+        IUserPasswordStore<IdentityUser<long>>,
+        IUserSecurityStampStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -335,6 +337,25 @@ namespace Contact.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(_disposed, this);
             return Task.FromResult(user.PasswordHash is not null);
+        }
+        #endregion
+
+        #region IUserSecurityStampStore
+        /// <inheritdoc/>
+        public Task SetSecurityStampAsync(IdentityUser<long> user, string stamp, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.SecurityStamp = stamp;
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task<string?> GetSecurityStampAsync(IdentityUser<long> user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.SecurityStamp);
         }
         #endregion
 
