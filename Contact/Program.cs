@@ -33,7 +33,7 @@ var connectionString = builder.Configuration.GetConnectionString("Npgsql")
 
 builder.Services.AddNpgsqlDataSource(connectionString);
 
-builder.Services.AddScoped<IUserStore<IdentityUser<long>>, IdentityStore>();
+builder.Services.AddScoped<IUserStore<IdentityUser<long>>, UserStore>();
 
 var app = builder.Build();
 

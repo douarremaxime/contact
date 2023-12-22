@@ -5,9 +5,9 @@ using NpgsqlTypes;
 namespace Contact.Stores
 {
     /// <summary>
-    /// Identity store.
+    /// User store.
     /// </summary>
-    public sealed class IdentityStore : IUserPasswordStore<IdentityUser<long>>
+    public sealed class UserStore : IUserPasswordStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -23,7 +23,7 @@ namespace Contact.Stores
         /// Constructor.
         /// </summary>
         /// <param name="dataSource">Data source.</param>
-        public IdentityStore(NpgsqlDataSource dataSource) =>
+        public UserStore(NpgsqlDataSource dataSource) =>
             _dataSource = dataSource;
 
         #region IUserStore
