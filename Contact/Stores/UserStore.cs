@@ -9,7 +9,8 @@ namespace Contact.Stores
     /// </summary>
     public sealed class UserStore :
         IUserPasswordStore<IdentityUser<long>>,
-        IUserSecurityStampStore<IdentityUser<long>>
+        IUserSecurityStampStore<IdentityUser<long>>,
+        IUserLockoutStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -390,6 +391,84 @@ namespace Contact.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(_disposed, this);
             return Task.FromResult(user.SecurityStamp);
+        }
+        #endregion
+
+        #region IUserLockoutStore
+        /// <inheritdoc/>
+        public Task<DateTimeOffset?> GetLockoutEndDateAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.LockoutEnd);
+        }
+
+        /// <inheritdoc/>
+        public Task SetLockoutEndDateAsync(
+            IdentityUser<long> user,
+            DateTimeOffset? lockoutEnd,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.LockoutEnd = lockoutEnd;
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task<int> IncrementAccessFailedCountAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.AccessFailedCount++;
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        /// <inheritdoc/>
+        public Task ResetAccessFailedCountAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.AccessFailedCount = 0;
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task<int> GetAccessFailedCountAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> GetLockoutEnabledAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return Task.FromResult(user.LockoutEnabled);
+        }
+
+        /// <inheritdoc/>
+        public Task SetLockoutEnabledAsync(
+            IdentityUser<long> user,
+            bool enabled,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            user.LockoutEnabled = enabled;
+            return Task.CompletedTask;
         }
         #endregion
 
