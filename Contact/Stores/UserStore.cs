@@ -93,7 +93,7 @@ namespace Contact.Stores
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
             var sql = "INSERT INTO users " +
-                "VALUES (DEFAULT, ($1), ($2), ($3), ($4))";
+                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6), ($7))";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -119,6 +119,24 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
+            var lockoutEndDateParam = new NpgsqlParameter
+            {
+                Value = user.LockoutEnd,
+                NpgsqlDbType = NpgsqlDbType.TimestampTz
+            };
+
+            var lockoutEnabledParam = new NpgsqlParameter<bool>
+            {
+                TypedValue = user.LockoutEnabled,
+                NpgsqlDbType = NpgsqlDbType.Boolean
+            };
+
+            var accessFailedCountParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.AccessFailedCount,
+                NpgsqlDbType = NpgsqlDbType.Smallint
+            };
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
@@ -126,7 +144,10 @@ namespace Contact.Stores
                     userNameParam,
                     normalizedUserNameParam,
                     passwordHashParam,
-                    securityStampParam
+                    securityStampParam,
+                    lockoutEndDateParam,
+                    lockoutEnabledParam,
+                    accessFailedCountParam
                 }
             };
 
@@ -155,8 +176,11 @@ namespace Contact.Stores
                     "username = ($1), " +
                     "normalized_username = ($2), " +
                     "password_hash = ($3), " +
-                    "security_stamp = ($4) " +
-                "WHERE id = ($5)";
+                    "security_stamp = ($4), " +
+                    "lockout_end_date = ($5), " +
+                    "lockout_enabled = ($6), " +
+                    "access_failed_count = ($7) " +
+                "WHERE id = ($8)";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -182,6 +206,24 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
+            var lockoutEndDateParam = new NpgsqlParameter
+            {
+                Value = user.LockoutEnd,
+                NpgsqlDbType = NpgsqlDbType.TimestampTz
+            };
+
+            var lockoutEnabledParam = new NpgsqlParameter<bool>
+            {
+                TypedValue = user.LockoutEnabled,
+                NpgsqlDbType = NpgsqlDbType.Boolean
+            };
+
+            var accessFailedCountParam = new NpgsqlParameter<int>
+            {
+                TypedValue = user.AccessFailedCount,
+                NpgsqlDbType = NpgsqlDbType.Smallint
+            };
+
             var idParam = new NpgsqlParameter<long>
             {
                 TypedValue = user.Id,
@@ -196,6 +238,9 @@ namespace Contact.Stores
                     normalizedUserNameParam,
                     passwordHashParam,
                     securityStampParam,
+                    lockoutEndDateParam,
+                    lockoutEnabledParam,
+                    accessFailedCountParam,
                     idParam
                 }
             };
@@ -259,7 +304,10 @@ namespace Contact.Stores
                     "username, " +
                     "normalized_username, " +
                     "password_hash, " +
-                    "security_stamp " +
+                    "security_stamp, " +
+                    "lockout_end_date, " +
+                    "lockout_enabled, " +
+                    "access_failed_count " +
                 "FROM users WHERE id = ($1)";
 
             var idParam = new NpgsqlParameter<long>
@@ -285,6 +333,9 @@ namespace Contact.Stores
                     NormalizedUserName = reader.GetString(1),
                     PasswordHash = reader.GetString(2),
                     SecurityStamp = reader.GetString(3),
+                    LockoutEnd = reader.GetFieldValue<DateTimeOffset?>(4),
+                    LockoutEnabled = reader.GetBoolean(5),
+                    AccessFailedCount = reader.GetInt32(6)
                 };
             }
 
@@ -304,6 +355,9 @@ namespace Contact.Stores
                     "username, " +
                     "password_hash, " +
                     "security_stamp " +
+                    "lockout_end_date, " +
+                    "lockout_enabled, " +
+                    "access_failed_count " +
                 "FROM users WHERE normalized_username = ($1)";
 
             var normalizedUserNameParam = new NpgsqlParameter
@@ -329,6 +383,9 @@ namespace Contact.Stores
                     NormalizedUserName = normalizedUserName,
                     PasswordHash = reader.GetString(2),
                     SecurityStamp = reader.GetString(3),
+                    LockoutEnd = reader.GetFieldValue<DateTimeOffset?>(4),
+                    LockoutEnabled = reader.GetBoolean(5),
+                    AccessFailedCount = reader.GetInt32(6)
                 };
             }
 
