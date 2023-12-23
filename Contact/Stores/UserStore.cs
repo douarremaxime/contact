@@ -89,9 +89,6 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
             var sql = "INSERT INTO users " +
                 "VALUES (DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6), ($7))";
 
@@ -137,6 +134,9 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Smallint
             };
 
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
@@ -168,9 +168,6 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
             var sql = "UPDATE users " +
                 "SET " +
                     "username = ($1), " +
@@ -230,6 +227,9 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Bigint
             };
 
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
+
             await using var command = new NpgsqlCommand(sql, connection)
             {
                 Parameters =
@@ -262,9 +262,6 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
             var sql = "DELETE FROM users WHERE id = ($1)";
 
             var idParam = new NpgsqlParameter<long>
@@ -272,6 +269,9 @@ namespace Contact.Stores
                 TypedValue = user.Id,
                 NpgsqlDbType = NpgsqlDbType.Bigint
             };
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
 
             await using var command = new NpgsqlCommand(sql, connection)
             {
@@ -297,9 +297,6 @@ namespace Contact.Stores
         {
             var parsedUserId = long.Parse(userId);
 
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
             var sql = "SELECT " +
                     "username, " +
                     "normalized_username, " +
@@ -315,6 +312,9 @@ namespace Contact.Stores
                 TypedValue = parsedUserId,
                 NpgsqlDbType = NpgsqlDbType.Bigint
             };
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
 
             await using var command = new NpgsqlCommand(sql, connection)
             {
@@ -347,9 +347,6 @@ namespace Contact.Stores
             string normalizedUserName,
             CancellationToken cancellationToken)
         {
-            await using var connection =
-                await _dataSource.OpenConnectionAsync(cancellationToken);
-
             var sql = "SELECT " +
                     "id, " +
                     "username, " +
@@ -365,6 +362,9 @@ namespace Contact.Stores
                 Value = normalizedUserName,
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
+
+            await using var connection =
+                await _dataSource.OpenConnectionAsync(cancellationToken);
 
             await using var command = new NpgsqlCommand(sql, connection)
             {
