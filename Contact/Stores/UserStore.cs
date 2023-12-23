@@ -371,7 +371,10 @@ namespace Contact.Stores
 
         #region IUserSecurityStampStore
         /// <inheritdoc/>
-        public Task SetSecurityStampAsync(IdentityUser<long> user, string stamp, CancellationToken cancellationToken)
+        public Task SetSecurityStampAsync(
+            IdentityUser<long> user,
+            string stamp,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(_disposed, this);
@@ -380,7 +383,9 @@ namespace Contact.Stores
         }
 
         /// <inheritdoc/>
-        public Task<string?> GetSecurityStampAsync(IdentityUser<long> user, CancellationToken cancellationToken)
+        public Task<string?> GetSecurityStampAsync(
+            IdentityUser<long> user,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(_disposed, this);
