@@ -323,7 +323,7 @@ namespace Contact.Stores
                     "id, " +
                     "username, " +
                     "password_hash, " +
-                    "security_stamp " +
+                    "security_stamp, " +
                     "lockout_end_date, " +
                     "lockout_enabled, " +
                     "access_failed_count " +
