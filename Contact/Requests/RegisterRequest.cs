@@ -1,15 +1,22 @@
-﻿using Contact.Controllers;
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Contact.Requests
 {
     /// <summary>
-    /// Request to register a new user via <see cref="IdentityController.RegisterAsync(RegisterRequest, UserManager{IdentityUser{long}}, IUserStore{IdentityUser{long}})"/>
+    /// Request to register a new user.
     /// </summary>
-    /// <param name="UserName">UserName.</param>
-    /// <param name="Password">Password.</param>
-    public record class RegisterRequest(
-        [Required] string UserName,
-        [Required] string Password);
+    public record class RegisterRequest
+    {
+        /// <summary>
+        /// Username.
+        /// </summary>
+        [Required]
+        public required string Username { get; init; }
+
+        /// <summary>
+        /// Password.
+        /// </summary>
+        [Required]
+        public required string Password { get; init; }
+    }
 }
