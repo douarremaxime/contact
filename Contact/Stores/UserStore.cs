@@ -90,7 +90,7 @@ namespace Contact.Stores
             CancellationToken cancellationToken)
         {
             var sql = "INSERT INTO users " +
-                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6), ($7))";
+                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), NULL, ($5), ($6))";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -116,12 +116,6 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
-            var lockoutEndDateParam = new NpgsqlParameter
-            {
-                Value = user.LockoutEnd,
-                NpgsqlDbType = NpgsqlDbType.TimestampTz
-            };
-
             var lockoutEnabledParam = new NpgsqlParameter<bool>
             {
                 TypedValue = user.LockoutEnabled,
@@ -145,7 +139,6 @@ namespace Contact.Stores
                     normalizedUserNameParam,
                     passwordHashParam,
                     securityStampParam,
-                    lockoutEndDateParam,
                     lockoutEnabledParam,
                     accessFailedCountParam
                 }
