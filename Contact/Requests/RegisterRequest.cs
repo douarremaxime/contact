@@ -1,5 +1,6 @@
 ﻿using Contact.Controllers;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Contact.Requests
 {
@@ -9,6 +10,6 @@ namespace Contact.Requests
     /// <param name="UserName">UserName.</param>
     /// <param name="Password">Password.</param>
     public record class RegisterRequest(
-        string UserName,
-        string Password);
+        [Required] string UserName,
+        [Required] string Password);
 }
