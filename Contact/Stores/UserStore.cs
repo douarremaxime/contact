@@ -151,16 +151,9 @@ namespace Contact.Stores
                 }
             };
 
-            var rows = await command.ExecuteNonQueryAsync(cancellationToken);
+            await command.ExecuteNonQueryAsync(cancellationToken);
 
-            if (rows > 0)
-                return IdentityResult.Success;
-
-            return IdentityResult.Failed(new IdentityError
-            {
-                Code = "UserStoreError",
-                Description = $"Could not insert user {user.UserName}."
-            });
+            return IdentityResult.Success;
         }
 
         /// <inheritdoc/>
@@ -247,14 +240,7 @@ namespace Contact.Stores
 
             var rows = await command.ExecuteNonQueryAsync(cancellationToken);
 
-            if (rows > 0)
-                return IdentityResult.Success;
-
-            return IdentityResult.Failed(new IdentityError
-            {
-                Code = "UserStoreError",
-                Description = $"Could not update user {user.UserName}."
-            });
+            return IdentityResult.Success;
         }
 
         /// <inheritdoc/>
@@ -280,14 +266,7 @@ namespace Contact.Stores
 
             var rows = await command.ExecuteNonQueryAsync(cancellationToken);
 
-            if (rows > 0)
-                return IdentityResult.Success;
-
-            return IdentityResult.Failed(new IdentityError
-            {
-                Code = "UserStoreError",
-                Description = $"Could not delete user {user.UserName}."
-            });
+            return IdentityResult.Success;
         }
 
         /// <inheritdoc/>
