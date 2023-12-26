@@ -90,7 +90,7 @@ namespace Contact.Stores
             CancellationToken cancellationToken)
         {
             var sql = "INSERT INTO users " +
-                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), NULL, ($5), ($6))";
+                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), NULL, ($5), 0)";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -122,12 +122,6 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Boolean
             };
 
-            var accessFailedCountParam = new NpgsqlParameter<int>
-            {
-                TypedValue = user.AccessFailedCount,
-                NpgsqlDbType = NpgsqlDbType.Smallint
-            };
-
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
@@ -139,8 +133,7 @@ namespace Contact.Stores
                     normalizedUserNameParam,
                     passwordHashParam,
                     securityStampParam,
-                    lockoutEnabledParam,
-                    accessFailedCountParam
+                    lockoutEnabledParam
                 }
             };
 
