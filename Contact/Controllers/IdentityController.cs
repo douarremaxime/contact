@@ -34,17 +34,17 @@ namespace Contact.Controllers
                 request.Password);
 
             if (!result.Succeeded)
-            return ValidationProblem(
-                result.Errors.Aggregate(
-                    seed: new ModelStateDictionary(),
-                    func: (errorDictionary, error) =>
-                    {
-                        errorDictionary.AddModelError(
-                            error.Code,
-                            error.Description);
+                return ValidationProblem(
+                    result.Errors.Aggregate(
+                        seed: new ModelStateDictionary(),
+                        func: (errorDictionary, error) =>
+                        {
+                            errorDictionary.AddModelError(
+                                error.Code,
+                                error.Description);
 
-                        return errorDictionary;
-                    }));
+                            return errorDictionary;
+                        }));
 
             return NoContent();
         }
@@ -92,6 +92,50 @@ namespace Contact.Controllers
                 IdentityConstants.ApplicationScheme;
 
             await signInManager.SignOutAsync();
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Changes the username of a user.
+        /// </summary>
+        /// <param name="request">Change username request.</param>
+        /// <param name="userManager">User manager.</param>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        [HttpPost("change-username")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> ChangeUsernameAsync(
+            ChangeUsernameRequest request,
+            UserManager<IdentityUser<long>> userManager,
+            SignInManager<IdentityUser<long>> signInManager)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            if (user is null)
+                return Unauthorized();
+
+            var result = await userManager.SetUserNameAsync(user, request.NewUsername);
+
+            if (!result.Succeeded)
+                return ValidationProblem(
+                    result.Errors.Aggregate(
+                        seed: new ModelStateDictionary(),
+                        func: (errorDictionary, error) =>
+                        {
+                            errorDictionary.AddModelError(
+                                error.Code,
+                                error.Description);
+
+                            return errorDictionary;
+                        }));
+
+            signInManager.AuthenticationScheme =
+                IdentityConstants.ApplicationScheme;
+
+            await signInManager.RefreshSignInAsync(user);
 
             return NoContent();
         }
