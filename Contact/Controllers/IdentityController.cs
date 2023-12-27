@@ -48,5 +48,34 @@ namespace Contact.Controllers
                         return errorDictionary;
                     }));
         }
+
+        /// <summary>
+        /// User sign in.
+        /// </summary>
+        /// <param name="request">Sign in request.</param>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        [HttpPost("signin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [AllowAnonymous]
+        public async Task<ActionResult> SignInAsync(
+            SignInRequest request,
+            SignInManager<IdentityUser<long>> signInManager)
+        {
+            signInManager.AuthenticationScheme =
+                IdentityConstants.ApplicationScheme;
+
+            var result = await signInManager.PasswordSignInAsync(
+                request.Username,
+                request.Password,
+                request.IsPersistent,
+                lockoutOnFailure: false);
+
+            if (!result.Succeeded)
+                return Unauthorized(result);
+
+            return NoContent();
+        }
     }
 }
