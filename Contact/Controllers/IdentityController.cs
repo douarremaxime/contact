@@ -34,8 +34,6 @@ namespace Contact.Controllers
                 request.Password);
 
             if (!result.Succeeded)
-                return NoContent();
-
             return ValidationProblem(
                 result.Errors.Aggregate(
                     seed: new ModelStateDictionary(),
