@@ -18,5 +18,11 @@ namespace Contact.Requests
         /// </summary>
         [Required]
         public required string Password { get; init; }
+
+        /// <summary>
+        /// Flag indicating whether the sign-in cookie should persist after the browser is closed.
+        /// </summary>
+        [Required]
+        public required bool IsPersistent { get; init; }
     }
 }
