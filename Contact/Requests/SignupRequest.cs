@@ -5,7 +5,7 @@ namespace Contact.Requests
     /// <summary>
     /// Request to register a new user.
     /// </summary>
-    public record class RegisterRequest
+    public record class SignupRequest
     {
         /// <summary>
         /// Username.

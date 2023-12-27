@@ -16,15 +16,15 @@ namespace Contact.Controllers
         /// <summary>
         /// Registers a new user.
         /// </summary>
-        /// <param name="request">Registration request.</param>
+        /// <param name="request">Signup request.</param>
         /// <param name="userManager">User manager.</param>
-        /// <returns>No content.</returns>
-        [HttpPost("register")]
+        /// <returns>An action result.</returns>
+        [HttpPost("signup")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         public async Task<ActionResult> RegisterAsync(
-            RegisterRequest request,
+            SignupRequest request,
             UserManager<IdentityUser<long>> userManager)
         {
             var user = new IdentityUser<long>(request.Username);
