@@ -33,7 +33,7 @@ namespace Contact.Controllers
                 user,
                 request.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
                 return NoContent();
 
             return ValidationProblem(
@@ -47,6 +47,8 @@ namespace Contact.Controllers
 
                         return errorDictionary;
                     }));
+
+            return NoContent();
         }
 
         /// <summary>
