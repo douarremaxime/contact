@@ -23,7 +23,7 @@ namespace Contact.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterAsync(
+        public async Task<ActionResult> SignUpAsync(
             SignUpRequest request,
             UserManager<IdentityUser<long>> userManager)
         {
