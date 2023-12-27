@@ -33,26 +33,20 @@ namespace Contact.Controllers
                 user,
                 request.Password);
 
-            if (!result.Succeeded)
-            {
-                return CreateValidationProblem(result);
-            }
+            if (result.Succeeded)
+                return NoContent();
 
-            return NoContent();
-        }
+            return ValidationProblem(
+                result.Errors.Aggregate(
+                    seed: new ModelStateDictionary(),
+                    func: (errorDictionary, error) =>
+                    {
+                        errorDictionary.AddModelError(
+                            error.Code,
+                            error.Description);
 
-        private ActionResult CreateValidationProblem(IdentityResult result)
-        {
-            var errorDictionary = new ModelStateDictionary();
-
-            foreach (var error in result.Errors)
-            {
-                errorDictionary.AddModelError(
-                    error.Code,
-                    error.Description);
-            }
-
-            return ValidationProblem(errorDictionary);
+                        return errorDictionary;
+                    }));
         }
     }
 }
