@@ -9,8 +9,7 @@ namespace Contact.Stores
     /// </summary>
     public sealed class UserStore :
         IUserPasswordStore<IdentityUser<long>>,
-        IUserSecurityStampStore<IdentityUser<long>>,
-        IUserLockoutStore<IdentityUser<long>>
+        IUserSecurityStampStore<IdentityUser<long>>
     {
         /// <summary>
         /// Data source.
@@ -89,8 +88,7 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
-            var sql = "INSERT INTO users " +
-                "VALUES (DEFAULT, ($1), ($2), ($3), ($4), NULL, ($5), 0)";
+            var sql = "INSERT INTO users VALUES (DEFAULT, ($1), ($2), ($3), ($4))";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -116,12 +114,6 @@ namespace Contact.Stores
                 NpgsqlDbType = NpgsqlDbType.Varchar
             };
 
-            var lockoutEnabledParam = new NpgsqlParameter<bool>
-            {
-                TypedValue = user.LockoutEnabled,
-                NpgsqlDbType = NpgsqlDbType.Boolean
-            };
-
             await using var connection =
                 await _dataSource.OpenConnectionAsync(cancellationToken);
 
@@ -132,8 +124,7 @@ namespace Contact.Stores
                     userNameParam,
                     normalizedUserNameParam,
                     passwordHashParam,
-                    securityStampParam,
-                    lockoutEnabledParam
+                    securityStampParam
                 }
             };
 
@@ -152,11 +143,8 @@ namespace Contact.Stores
                     "username = ($1), " +
                     "normalized_username = ($2), " +
                     "password_hash = ($3), " +
-                    "security_stamp = ($4), " +
-                    "lockout_end_date = ($5), " +
-                    "lockout_enabled = ($6), " +
-                    "access_failed_count = ($7) " +
-                "WHERE id = ($8)";
+                    "security_stamp = ($4) " +
+                "WHERE id = ($5)";
 
             var userNameParam = new NpgsqlParameter
             {
@@ -180,24 +168,6 @@ namespace Contact.Stores
             {
                 Value = user.SecurityStamp,
                 NpgsqlDbType = NpgsqlDbType.Varchar
-            };
-
-            var lockoutEndDateParam = new NpgsqlParameter
-            {
-                Value = user.LockoutEnd,
-                NpgsqlDbType = NpgsqlDbType.TimestampTz
-            };
-
-            var lockoutEnabledParam = new NpgsqlParameter<bool>
-            {
-                TypedValue = user.LockoutEnabled,
-                NpgsqlDbType = NpgsqlDbType.Boolean
-            };
-
-            var accessFailedCountParam = new NpgsqlParameter<int>
-            {
-                TypedValue = user.AccessFailedCount,
-                NpgsqlDbType = NpgsqlDbType.Smallint
             };
 
             var idParam = new NpgsqlParameter<long>
@@ -217,9 +187,6 @@ namespace Contact.Stores
                     normalizedUserNameParam,
                     passwordHashParam,
                     securityStampParam,
-                    lockoutEndDateParam,
-                    lockoutEnabledParam,
-                    accessFailedCountParam,
                     idParam
                 }
             };
@@ -266,10 +233,7 @@ namespace Contact.Stores
                     "username, " +
                     "normalized_username, " +
                     "password_hash, " +
-                    "security_stamp, " +
-                    "lockout_end_date, " +
-                    "lockout_enabled, " +
-                    "access_failed_count " +
+                    "security_stamp " +
                 "FROM users WHERE id = ($1)";
 
             var idParam = new NpgsqlParameter<long>
@@ -297,10 +261,7 @@ namespace Contact.Stores
                     UserName = reader.GetString(0),
                     NormalizedUserName = reader.GetString(1),
                     PasswordHash = reader.GetString(2),
-                    SecurityStamp = reader.GetString(3),
-                    LockoutEnd = reader.GetFieldValue<DateTimeOffset?>(4),
-                    LockoutEnabled = reader.GetBoolean(5),
-                    AccessFailedCount = reader.GetInt32(6)
+                    SecurityStamp = reader.GetString(3)
                 };
             }
 
@@ -316,10 +277,7 @@ namespace Contact.Stores
                     "id, " +
                     "username, " +
                     "password_hash, " +
-                    "security_stamp, " +
-                    "lockout_end_date, " +
-                    "lockout_enabled, " +
-                    "access_failed_count " +
+                    "security_stamp " +
                 "FROM users WHERE normalized_username = ($1)";
 
             var normalizedUserNameParam = new NpgsqlParameter
@@ -347,10 +305,7 @@ namespace Contact.Stores
                     UserName = reader.GetString(1),
                     NormalizedUserName = normalizedUserName,
                     PasswordHash = reader.GetString(2),
-                    SecurityStamp = reader.GetString(3),
-                    LockoutEnd = reader.GetFieldValue<DateTimeOffset?>(4),
-                    LockoutEnabled = reader.GetBoolean(5),
-                    AccessFailedCount = reader.GetInt32(6)
+                    SecurityStamp = reader.GetString(3)
                 };
             }
 
@@ -413,84 +368,6 @@ namespace Contact.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(_disposed, this);
             return Task.FromResult(user.SecurityStamp);
-        }
-        #endregion
-
-        #region IUserLockoutStore
-        /// <inheritdoc/>
-        public Task<DateTimeOffset?> GetLockoutEndDateAsync(
-            IdentityUser<long> user,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            return Task.FromResult(user.LockoutEnd);
-        }
-
-        /// <inheritdoc/>
-        public Task SetLockoutEndDateAsync(
-            IdentityUser<long> user,
-            DateTimeOffset? lockoutEnd,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            user.LockoutEnd = lockoutEnd;
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task<int> IncrementAccessFailedCountAsync(
-            IdentityUser<long> user,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            user.AccessFailedCount++;
-            return Task.FromResult(user.AccessFailedCount);
-        }
-
-        /// <inheritdoc/>
-        public Task ResetAccessFailedCountAsync(
-            IdentityUser<long> user,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            user.AccessFailedCount = 0;
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task<int> GetAccessFailedCountAsync(
-            IdentityUser<long> user,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            return Task.FromResult(user.AccessFailedCount);
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> GetLockoutEnabledAsync(
-            IdentityUser<long> user,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            return Task.FromResult(user.LockoutEnabled);
-        }
-
-        /// <inheritdoc/>
-        public Task SetLockoutEnabledAsync(
-            IdentityUser<long> user,
-            bool enabled,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            user.LockoutEnabled = enabled;
-            return Task.CompletedTask;
         }
         #endregion
 
