@@ -3,9 +3,9 @@
 namespace Contact.Requests
 {
     /// <summary>
-    /// Request to log in.
+    /// Request to sign in.
     /// </summary>
-    public record class LoginRequest
+    public record class SignInRequest
     {
         /// <summary>
         /// Username.
@@ -20,7 +20,7 @@ namespace Contact.Requests
         public required string Password { get; init; }
 
         /// <summary>
-        /// Flag indicating whether the sign-in cookie should persist after the browser is closed.
+        /// True to persist the sign in cookie after the browser is closed, false otherwise.
         /// </summary>
         [Required]
         public required bool IsPersistent { get; init; }
