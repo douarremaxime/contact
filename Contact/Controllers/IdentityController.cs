@@ -77,5 +77,23 @@ namespace Contact.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// User sign out.
+        /// </summary>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        [HttpPost("signout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> SignOutAsync(
+            SignInManager<IdentityUser<long>> signInManager)
+        {
+            signInManager.AuthenticationScheme =
+                IdentityConstants.ApplicationScheme;
+
+            await signInManager.SignOutAsync();
+
+            return NoContent();
+        }
     }
 }
