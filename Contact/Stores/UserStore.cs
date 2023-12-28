@@ -238,7 +238,6 @@ namespace Contact.Stores
 
             var idParam = new NpgsqlParameter<long>
             {
-                TypedValue = parsedUserId,
                 NpgsqlDbType = NpgsqlDbType.Bigint
             };
 
@@ -249,6 +248,10 @@ namespace Contact.Stores
             {
                 Parameters = { idParam }
             };
+
+            await command.PrepareAsync(cancellationToken);
+
+            idParam.TypedValue = parsedUserId;
 
             await using var reader =
                 await command.ExecuteReaderAsync(cancellationToken);
