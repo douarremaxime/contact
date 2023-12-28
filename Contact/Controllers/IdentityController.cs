@@ -188,5 +188,47 @@ namespace Contact.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Sign out all devices by updating the user security stamp.
+        /// </summary>
+        /// <param name="userManager">User manager.</param>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        [HttpPost("signout-all")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> SignOutAllDevicesAsync(
+            UserManager<IdentityUser<long>> userManager,
+            SignInManager<IdentityUser<long>> signInManager)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            if (user is null)
+                return Unauthorized();
+
+            var result = await userManager.UpdateSecurityStampAsync(user);
+
+            if (!result.Succeeded)
+                return ValidationProblem(
+                    result.Errors.Aggregate(
+                        seed: new ModelStateDictionary(),
+                        func: (errorDictionary, error) =>
+                        {
+                            errorDictionary.AddModelError(
+                                error.Code,
+                                error.Description);
+
+                            return errorDictionary;
+                        }));
+
+            signInManager.AuthenticationScheme =
+                IdentityConstants.ApplicationScheme;
+
+            await signInManager.SignOutAsync();
+
+            return NoContent();
+        }
     }
 }
