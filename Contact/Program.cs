@@ -29,7 +29,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
-    options.ValidationInterval = TimeSpan.Zero;
+    options.ValidationInterval = TimeSpan.FromMinutes(1);
 });
 
 builder.Services.AddAuthorizationBuilder()
