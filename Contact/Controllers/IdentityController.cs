@@ -130,7 +130,7 @@ namespace Contact.Controllers
                 lockoutOnFailure: false);
 
             if (!result.Succeeded)
-                return Unauthorized(result);
+                return Unauthorized();
 
             return NoContent();
         }
