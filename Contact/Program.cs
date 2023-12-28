@@ -24,7 +24,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.AccessDeniedPath = "/access-denied.html";
     options.Cookie.Name = "contact_auth";
-    options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.LoginPath = "/signin.html";
 });
 
