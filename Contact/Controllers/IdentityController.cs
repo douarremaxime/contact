@@ -206,7 +206,7 @@ namespace Contact.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         public async Task<ActionResult> SignUpAsync(
-            SignUpRequest request,
+            [FromForm] SignUpRequest request,
             UserManager<IdentityUser<long>> userManager)
         {
             var user = new IdentityUser<long>(request.Username);
