@@ -16,7 +16,7 @@ namespace Contact.Requests
         /// <summary>
         /// Password.
         /// </summary>
-        [Required]
+        [Required, MinLength(6)]
         public required string Password { get; init; }
     }
 }

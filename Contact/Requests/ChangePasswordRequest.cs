@@ -10,13 +10,13 @@ namespace Contact.Requests
         /// <summary>
         /// Current password.
         /// </summary>
-        [Required]
+        [Required, MinLength(6)]
         public required string CurrentPassword { get; init; }
 
         /// <summary>
         /// New password.
         /// </summary>
-        [Required]
+        [Required, MinLength(6)]
         public required string NewPassword { get; init; }
     }
 }
