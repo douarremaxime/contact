@@ -8,6 +8,12 @@ namespace Contact.Requests
     public record class ChangePasswordRequest
     {
         /// <summary>
+        /// Current password.
+        /// </summary>
+        [Required]
+        public required string CurrentPassword { get; init; }
+
+        /// <summary>
         /// New password.
         /// </summary>
         [Required]

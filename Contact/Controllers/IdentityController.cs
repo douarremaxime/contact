@@ -117,7 +117,56 @@ namespace Contact.Controllers
             if (user is null)
                 return Unauthorized();
 
-            var result = await userManager.SetUserNameAsync(user, request.NewUsername);
+            var result = await userManager.SetUserNameAsync(
+                user,
+                request.NewUsername);
+
+            if (!result.Succeeded)
+                return ValidationProblem(
+                    result.Errors.Aggregate(
+                        seed: new ModelStateDictionary(),
+                        func: (errorDictionary, error) =>
+                        {
+                            errorDictionary.AddModelError(
+                                error.Code,
+                                error.Description);
+
+                            return errorDictionary;
+                        }));
+
+            signInManager.AuthenticationScheme =
+                IdentityConstants.ApplicationScheme;
+
+            await signInManager.RefreshSignInAsync(user);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Changes the password of a user.
+        /// </summary>
+        /// <param name="request">Change password request.</param>
+        /// <param name="userManager">User manager.</param>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        [HttpPost("change-password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> ChangePasswordAsync(
+            ChangePasswordRequest request,
+            UserManager<IdentityUser<long>> userManager,
+            SignInManager<IdentityUser<long>> signInManager)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            if (user is null)
+                return Unauthorized();
+
+            var result = await userManager.ChangePasswordAsync(
+                user,
+                request.CurrentPassword,
+                request.NewPassword);
 
             if (!result.Succeeded)
                 return ValidationProblem(
