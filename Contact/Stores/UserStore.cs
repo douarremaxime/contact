@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -12,6 +13,11 @@ namespace Contact.Stores
         IUserSecurityStampStore<IdentityUser<long>>
     {
         /// <summary>
+        /// In-memory cache.
+        /// </summary>
+        private readonly IMemoryCache _cache;
+
+        /// <summary>
         /// Data source.
         /// </summary>
         private readonly NpgsqlDataSource _dataSource;
@@ -24,9 +30,15 @@ namespace Contact.Stores
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="cache">In-memory cache.</param>
         /// <param name="dataSource">Data source.</param>
-        public UserStore(NpgsqlDataSource dataSource) =>
+        public UserStore(
+            [FromKeyedServices("user-cache")] IMemoryCache cache,
+            NpgsqlDataSource dataSource)
+        {
+            _cache = cache;
             _dataSource = dataSource;
+        }
 
         #region IUserStore
         /// <inheritdoc/>
@@ -138,6 +150,8 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
+            _cache.Remove(user.Id);
+
             var sql = "UPDATE users " +
                 "SET " +
                     "username = ($1), " +
@@ -201,6 +215,8 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
+            _cache.Remove(user.Id);
+
             var sql = "DELETE FROM users WHERE id = ($1)";
 
             var idParam = new NpgsqlParameter<long>
@@ -228,6 +244,9 @@ namespace Contact.Stores
             CancellationToken cancellationToken)
         {
             var parsedUserId = long.Parse(userId);
+
+            if (_cache.TryGetValue(parsedUserId, out IdentityUser<long>? user))
+                return user;
 
             var sql = "SELECT " +
                     "username, " +
@@ -258,14 +277,19 @@ namespace Contact.Stores
 
             if (await reader.ReadAsync(cancellationToken))
             {
-                return new IdentityUser<long>
-                {
-                    Id = parsedUserId,
-                    UserName = reader.GetString(0),
-                    NormalizedUserName = reader.GetString(1),
-                    PasswordHash = reader.GetString(2),
-                    SecurityStamp = reader.GetString(3)
-                };
+                return _cache.Set(
+                    key: parsedUserId,
+                    value: new IdentityUser<long>
+                    {
+                        Id = parsedUserId,
+                        UserName = reader.GetString(0),
+                        NormalizedUserName = reader.GetString(1),
+                        PasswordHash = reader.GetString(2),
+                        SecurityStamp = reader.GetString(3)
+                    },
+                    new MemoryCacheEntryOptions()
+                        .SetSize(1)
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(30)));
             }
 
             return null;

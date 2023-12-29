@@ -1,6 +1,7 @@
 ﻿using Contact.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,7 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
         /// <returns>An <see cref="IServiceCollection"/> that can be used to further configure services.</returns>
-        public static IServiceCollection AddContactIdentity(this IServiceCollection services)
+        public static IServiceCollection AddContactIdentity(
+            this IServiceCollection services)
         {
             services.AddIdentityApiEndpoints<IdentityUser<long>>(options =>
             {
@@ -53,7 +55,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configuration">The configuration.</param>
         /// <returns>An <see cref="IServiceCollection"/> that can be used to further configure services.</returns>
         /// <exception cref="ArgumentException">Connection string is null or missing.</exception>
-        public static IServiceCollection AddContactStores(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddContactStores(
+            this IServiceCollection services, 
+            IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("Npgsql")
                 ?? throw new ArgumentException("Null or missing Npgsql connection string.");
@@ -61,6 +65,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddNpgsqlDataSource(connectionString);
 
             services.AddScoped<IUserStore<IdentityUser<long>>, UserStore>();
+            services.AddKeyedSingleton<IMemoryCache>("user-cache", (sp, _) =>
+                new MemoryCache(
+                    new MemoryCacheOptions
+                    {
+                        SizeLimit = 1024,
+                        ExpirationScanFrequency = TimeSpan.FromMinutes(30)
+                    },
+                    sp.GetRequiredService<ILoggerFactory>()));
 
             return services;
         }
