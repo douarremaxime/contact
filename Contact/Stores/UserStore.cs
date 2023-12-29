@@ -100,6 +100,9 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             var sql = "INSERT INTO users VALUES (DEFAULT, ($1), ($2), ($3), ($4))";
 
             var userNameParam = new NpgsqlParameter
@@ -150,6 +153,9 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             _cache.Remove(user.Id);
 
             var sql = "UPDATE users " +
@@ -215,6 +221,9 @@ namespace Contact.Stores
             IdentityUser<long> user,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             _cache.Remove(user.Id);
 
             var sql = "DELETE FROM users WHERE id = ($1)";
@@ -243,6 +252,9 @@ namespace Contact.Stores
             string userId,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             var parsedUserId = long.Parse(userId);
 
             if (_cache.TryGetValue(parsedUserId, out IdentityUser<long>? user))
@@ -300,6 +312,9 @@ namespace Contact.Stores
             string normalizedUserName,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             var sql = "SELECT " +
                     "id, " +
                     "username, " +
