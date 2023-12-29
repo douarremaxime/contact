@@ -56,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An <see cref="IServiceCollection"/> that can be used to further configure services.</returns>
         /// <exception cref="ArgumentException">Connection string is null or missing.</exception>
         public static IServiceCollection AddContactStores(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("Npgsql")
@@ -65,14 +65,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddNpgsqlDataSource(connectionString);
 
             services.AddScoped<IUserStore<IdentityUser<long>>, UserStore>();
-            services.AddKeyedSingleton<IMemoryCache>("user-cache", (sp, _) =>
+            services.AddKeyedSingleton<IMemoryCache>("user-cache", (_, _) =>
                 new MemoryCache(
                     new MemoryCacheOptions
-                    {
+                    { 
                         SizeLimit = 1024,
                         ExpirationScanFrequency = TimeSpan.FromMinutes(30)
-                    },
-                    sp.GetRequiredService<ILoggerFactory>()));
+                    }));
 
             return services;
         }
