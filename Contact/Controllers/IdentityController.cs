@@ -112,10 +112,10 @@ namespace Contact.Controllers
         /// <param name="request">Sign in request.</param>
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
+        [AllowAnonymous]
         [HttpPost("signin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [AllowAnonymous]
         public async Task<ActionResult> SignInAsync(
             SignInRequest request,
             SignInManager<IdentityUser<long>> signInManager)
@@ -201,10 +201,11 @@ namespace Contact.Controllers
         /// <param name="request">Sign up request.</param>
         /// <param name="userManager">User manager.</param>
         /// <returns>An action result.</returns>
+        [AllowAnonymous]
         [HttpPost("signup")]
+        [Consumes("application/x-www-form-urlencoded")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [AllowAnonymous]
         public async Task<ActionResult> SignUpAsync(
             [FromForm] SignUpRequest request,
             UserManager<IdentityUser<long>> userManager)

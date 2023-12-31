@@ -4,11 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign up - Contact</title>
+    <script src="scripts/signup.js" defer></script>
   </head>
   <body>
     <main>
       <h1>Create a Contact account</h1>
-      <form>
+      <form id="signup-form">
         <ul>
           <li>
             <label for="username">Username</label>
@@ -26,6 +27,9 @@
               name="password"
               required
               minlength="6" />
+          </li>
+          <li>
+            <ul id="signup-errors"></ul>
           </li>
           <li>
             <button type="submit">Sign up</button>
