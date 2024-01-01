@@ -9,7 +9,7 @@
   <body>
     <main>
       <h1>Create a Contact account</h1>
-      <form id="signup-form">
+      <form id="form">
         <ul>
           <li>
             <label for="username">Username</label>
@@ -28,8 +28,9 @@
               required
               minlength="6" />
           </li>
-          <li>
-            <ul id="signup-errors"></ul>
+          <li id="errors-wrapper" hidden>
+            Errors:
+            <ul id="errors-list"></ul>
           </li>
           <li>
             <button type="submit">Sign up</button>

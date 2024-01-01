@@ -1,16 +1,17 @@
-const signupForm = document.querySelector("#signup-form");
-const signupErrors = document.querySelector("#signup-errors");
+const form = document.querySelector("#form");
+const errorsWrapper = document.querySelector("#errors-wrapper");
+const errorsList = document.querySelector("#errors-list");
 
-signupForm.addEventListener("submit", async (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     const response = await fetch("/Identity/signup", {
       method: "POST",
-      body: new URLSearchParams(new FormData(signupForm)),
+      body: new URLSearchParams(new FormData(form)),
     });
     switch (response.status) {
       case 204:
-        window.location = "signup-successful.html";
+        window.location = "/signup-successful.html";
         break;
       case 400:
         const result = await response.json();
@@ -19,7 +20,8 @@ signupForm.addEventListener("submit", async (event) => {
           li.textContent = error[0];
           return li;
         });
-        signupErrors.replaceChildren(...errors);
+        errorsList.replaceChildren(...errors);
+        errorsWrapper.removeAttribute("hidden");
         break;
       default:
         throw new Error(`Unexpected status code: ${response.status}`);
