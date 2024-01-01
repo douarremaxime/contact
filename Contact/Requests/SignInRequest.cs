@@ -20,9 +20,8 @@ namespace Contact.Requests
         public required string Password { get; init; }
 
         /// <summary>
-        /// True to persist the sign in cookie after the browser is closed, false otherwise.
+        /// True to persist the sign in cookie after the browser is closed, false otherwise. Defaults to false.
         /// </summary>
-        [Required]
-        public required bool IsPersistent { get; init; }
+        public bool IsPersistent { get; init; }
     }
 }
