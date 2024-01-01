@@ -4,11 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign in - Contact</title>
+    <script src="scripts/signin.js" defer></script>
   </head>
   <body>
     <main>
       <h1>Sign in to Contact</h1>
-      <form>
+      <form id="form">
         <ul>
           <li>
             <label for="username">Username</label>
@@ -26,6 +27,20 @@
               name="password"
               required
               minlength="6" />
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              id="isPersistent"
+              name="isPersistent"
+              value="true" />
+            <label for="isPersistent">Remember me</label>
+          </li>
+          <li id="errors-wrapper" hidden>
+            Errors:
+            <ul>
+              <li>Username or password is incorrect.</li>
+            </ul>
           </li>
           <li>
             <button type="submit">Sign in</button>

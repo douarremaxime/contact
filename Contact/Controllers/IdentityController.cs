@@ -114,10 +114,11 @@ namespace Contact.Controllers
         /// <returns>An action result.</returns>
         [AllowAnonymous]
         [HttpPost("signin")]
+        [Consumes("application/x-www-form-urlencoded")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> SignInAsync(
-            SignInRequest request,
+            [FromForm] SignInRequest request,
             SignInManager<IdentityUser<long>> signInManager)
         {
             signInManager.AuthenticationScheme =
