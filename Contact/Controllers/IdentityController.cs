@@ -52,9 +52,6 @@ namespace Contact.Controllers
                             return errorDictionary;
                         }));
 
-            signInManager.AuthenticationScheme =
-                IdentityConstants.ApplicationScheme;
-
             await signInManager.RefreshSignInAsync(user);
 
             return NoContent();
@@ -98,9 +95,6 @@ namespace Contact.Controllers
                             return errorDictionary;
                         }));
 
-            signInManager.AuthenticationScheme =
-                IdentityConstants.ApplicationScheme;
-
             await signInManager.RefreshSignInAsync(user);
 
             return NoContent();
@@ -121,9 +115,6 @@ namespace Contact.Controllers
             [FromForm] SignInRequest request,
             SignInManager<IdentityUser<long>> signInManager)
         {
-            signInManager.AuthenticationScheme =
-                IdentityConstants.ApplicationScheme;
-
             var result = await signInManager.PasswordSignInAsync(
                 request.Username,
                 request.Password,
@@ -170,9 +161,6 @@ namespace Contact.Controllers
                             return errorDictionary;
                         }));
 
-            signInManager.AuthenticationScheme =
-                IdentityConstants.ApplicationScheme;
-
             await signInManager.SignOutAsync();
 
             return NoContent();
@@ -188,9 +176,6 @@ namespace Contact.Controllers
         public async Task<ActionResult> SignOutAsync(
             SignInManager<IdentityUser<long>> signInManager)
         {
-            signInManager.AuthenticationScheme =
-                IdentityConstants.ApplicationScheme;
-
             await signInManager.SignOutAsync();
 
             return NoContent();
