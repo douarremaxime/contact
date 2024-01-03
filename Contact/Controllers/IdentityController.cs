@@ -11,6 +11,7 @@ namespace Contact.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
+    [Produces("application/problem+json")]
     public class IdentityController : ControllerBase
     {
         /// <summary>
@@ -187,6 +188,8 @@ namespace Contact.Controllers
         /// <param name="request">Sign up request.</param>
         /// <param name="userManager">User manager.</param>
         /// <returns>An action result.</returns>
+        /// <response code="204">User was successfully registered.</response>
+        /// <response code="400">Returns a problem details.</response>
         [AllowAnonymous]
         [HttpPost("signup")]
         [Consumes("application/x-www-form-urlencoded")]
@@ -194,7 +197,7 @@ namespace Contact.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SignUpAsync(
             [FromForm] SignUpRequest request,
-            UserManager<IdentityUser<long>> userManager)
+            [FromServices] UserManager<IdentityUser<long>> userManager)
         {
             var user = new IdentityUser<long>(request.Username);
 
