@@ -28,13 +28,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Lockout.AllowedForNewUsers = false;
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.AccessDeniedPath = "/access-denied.html";
-                options.Cookie.Name = "contact_auth";
-                options.LoginPath = "/signin.html";
-            });
-
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
                 options.ValidationInterval = TimeSpan.FromMinutes(1);
@@ -68,7 +61,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddKeyedSingleton<IMemoryCache>("user-cache", (_, _) =>
                 new MemoryCache(
                     new MemoryCacheOptions
-                    { 
+                    {
                         SizeLimit = 1024,
                         ExpirationScanFrequency = TimeSpan.FromMinutes(30)
                     }));
