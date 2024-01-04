@@ -1,4 +1,5 @@
-﻿using Contact.Requests;
+﻿using Contact.Exceptions;
+using Contact.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +10,7 @@ namespace Contact.Controllers
     /// <summary>
     /// Identity controller.
     /// </summary>
-    [ApiController]
     [Route("[controller]")]
-    [Produces("application/problem+json")]
     public class IdentityController : ControllerBase
     {
         /// <summary>
@@ -22,18 +21,17 @@ namespace Contact.Controllers
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
         [HttpPost("change-password")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Consumes("application/x-www-form-urlencoded")]
         public async Task<ActionResult> ChangePasswordAsync(
-            ChangePasswordRequest request,
-            UserManager<IdentityUser<long>> userManager,
-            SignInManager<IdentityUser<long>> signInManager)
+            [FromForm] ChangePasswordRequest request,
+            [FromServices] UserManager<IdentityUser<long>> userManager,
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
 
-            if (user is null)
-                return Unauthorized();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.ChangePasswordAsync(
                 user,
@@ -66,18 +64,17 @@ namespace Contact.Controllers
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
         [HttpPost("change-username")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Consumes("application/x-www-form-urlencoded")]
         public async Task<ActionResult> ChangeUsernameAsync(
-            ChangeUsernameRequest request,
-            UserManager<IdentityUser<long>> userManager,
-            SignInManager<IdentityUser<long>> signInManager)
+            [FromForm] ChangeUsernameRequest request,
+            [FromServices] UserManager<IdentityUser<long>> userManager,
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
 
-            if (user is null)
-                return Unauthorized();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.SetUserNameAsync(
                 user,
@@ -110,12 +107,13 @@ namespace Contact.Controllers
         [AllowAnonymous]
         [HttpPost("signin")]
         [Consumes("application/x-www-form-urlencoded")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> SignInAsync(
             [FromForm] SignInRequest request,
-            SignInManager<IdentityUser<long>> signInManager)
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
             var result = await signInManager.PasswordSignInAsync(
                 request.Username,
                 request.Password,
@@ -135,17 +133,12 @@ namespace Contact.Controllers
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
         [HttpPost("signout-all")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> SignOutAllDevicesAsync(
-            UserManager<IdentityUser<long>> userManager,
-            SignInManager<IdentityUser<long>> signInManager)
+            [FromServices] UserManager<IdentityUser<long>> userManager,
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-
-            if (user is null)
-                return Unauthorized();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.UpdateSecurityStampAsync(user);
 
@@ -173,9 +166,8 @@ namespace Contact.Controllers
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
         [HttpPost("signout")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> SignOutAsync(
-            SignInManager<IdentityUser<long>> signInManager)
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
             await signInManager.SignOutAsync();
 
@@ -188,17 +180,16 @@ namespace Contact.Controllers
         /// <param name="request">Sign up request.</param>
         /// <param name="userManager">User manager.</param>
         /// <returns>An action result.</returns>
-        /// <response code="204">User was successfully registered.</response>
-        /// <response code="400">Returns a problem details.</response>
         [AllowAnonymous]
         [HttpPost("signup")]
         [Consumes("application/x-www-form-urlencoded")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SignUpAsync(
             [FromForm] SignUpRequest request,
             [FromServices] UserManager<IdentityUser<long>> userManager)
         {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
             var user = new IdentityUser<long>(request.Username);
 
             var result = await userManager.CreateAsync(
