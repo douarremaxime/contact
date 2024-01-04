@@ -1,16 +1,6 @@
-using System.Reflection;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
-builder.Services.AddSwaggerGen(options =>
-{
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
-builder.Services.AddProblemDetails();
 
 builder.Services.AddContactIdentity();
 
@@ -18,26 +8,12 @@ builder.Services.AddContactStores(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
+app.UseExceptionHandler();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    app.UseExceptionHandler();
-    app.UseStatusCodePages();
-
-    app.UseHsts();    
-}
+if (!app.Environment.IsDevelopment())
+    app.UseHsts();
 
 app.UseHttpsRedirection();
-
-var options = new DefaultFilesOptions();
-options.DefaultFileNames[0] = "signin.html";
-app.UseDefaultFiles(options);
 
 app.UseStaticFiles();
 
