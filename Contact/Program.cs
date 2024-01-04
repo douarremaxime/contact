@@ -4,7 +4,6 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddContactIdentity();
-
 builder.Services.AddContactStores(builder.Configuration);
 
 var app = builder.Build();
