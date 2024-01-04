@@ -10,6 +10,7 @@ namespace Contact.Controllers
     /// <summary>
     /// Identity controller.
     /// </summary>
+    [ApiController]
     [Route("[controller]")]
     public class IdentityController : ControllerBase
     {
@@ -27,9 +28,6 @@ namespace Contact.Controllers
             [FromServices] UserManager<IdentityUser<long>> userManager,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
-
             var user = await userManager.GetUserAsync(HttpContext.User)
                 ?? throw new UserNotFoundException();
 
@@ -70,9 +68,6 @@ namespace Contact.Controllers
             [FromServices] UserManager<IdentityUser<long>> userManager,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
-
             var user = await userManager.GetUserAsync(HttpContext.User)
                 ?? throw new UserNotFoundException();
 
@@ -111,9 +106,6 @@ namespace Contact.Controllers
             [FromForm] SignInRequest request,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
-
             var result = await signInManager.PasswordSignInAsync(
                 request.Username,
                 request.Password,
@@ -187,9 +179,6 @@ namespace Contact.Controllers
             [FromForm] SignUpRequest request,
             [FromServices] UserManager<IdentityUser<long>> userManager)
         {
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
-
             var user = new IdentityUser<long>(request.Username);
 
             var result = await userManager.CreateAsync(
