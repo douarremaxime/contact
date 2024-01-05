@@ -28,6 +28,16 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Lockout.AllowedForNewUsers = false;
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/access-denied.html";
+                options.LoginPath = "/signin.html";
+
+                options.Cookie.Name = "contact_auth";
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
                 options.ValidationInterval = TimeSpan.FromMinutes(1);
