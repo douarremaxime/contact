@@ -19,8 +19,8 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services)
         {
             services
-                .AddAuthentication()
-                .AddCookie(options =>
+                .AddAuthentication(IdentityConstants.ApplicationScheme)
+                .AddCookie(IdentityConstants.ApplicationScheme, options =>
                 {
                     options.Cookie.Name = "contact_auth";
                     options.Cookie.SameSite = SameSiteMode.Strict;
