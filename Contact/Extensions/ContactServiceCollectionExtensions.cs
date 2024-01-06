@@ -18,25 +18,38 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddContactIdentity(
             this IServiceCollection services)
         {
-            services.AddIdentityApiEndpoints<IdentityUser<long>>(options =>
-            {
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireDigit = false;
+            services
+                .AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.Cookie.Name = "contact_auth";
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-                options.Lockout.AllowedForNewUsers = false;
-            });
+                    options.Events.OnRedirectToAccessDenied = context =>
+                    {
+                        context.Response.StatusCode = 403;
+                        return Task.CompletedTask;
+                    };
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        context.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    };
+                    options.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync;
+                });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.AccessDeniedPath = "/access-denied.html";
-                options.LoginPath = "/signin.html";
+            services
+                .AddIdentityCore<IdentityUser<long>>(options =>
+                {
+                    options.Lockout.AllowedForNewUsers = false;
 
-                options.Cookie.Name = "contact_auth";
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            });
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireDigit = false;
+                })
+                .AddSignInManager();
 
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
