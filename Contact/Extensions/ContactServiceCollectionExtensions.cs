@@ -28,14 +28,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.Cookie.SameSite = SameSiteMode.Strict;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-                    options.Events.OnRedirectToAccessDenied = context =>
+                    options.Events.OnRedirectToReturnUrl = context =>
                     {
-                        context.Response.StatusCode = 403;
-                        return Task.CompletedTask;
-                    };
-                    options.Events.OnRedirectToLogin = context =>
-                    {
-                        context.Response.StatusCode = 401;
+                        context.Response.Headers.Location = context.RedirectUri;
                         return Task.CompletedTask;
                     };
                     options.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync;
