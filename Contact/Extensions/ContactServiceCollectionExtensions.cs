@@ -22,6 +22,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddCookie(IdentityConstants.ApplicationScheme, options =>
                 {
+                    options.LoginPath = "/signin.html";
+
                     options.Cookie.Name = "contact_auth";
                     options.Cookie.SameSite = SameSiteMode.Strict;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
