@@ -106,9 +106,6 @@ namespace Contact.Controllers
             [FromForm] SignInRequest request,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            if (!request.IsPersistent)
-                signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
-
             var result = await signInManager.PasswordSignInAsync(
                 request.Username,
                 request.Password,
@@ -118,9 +115,7 @@ namespace Contact.Controllers
             if (!result.Succeeded)
                 return Unauthorized();
 
-            // The signInManager already produced the needed response
-            // in the form of a cookie or bearer token.
-            return Empty;
+            return NoContent();
         }
 
         /// <summary>
