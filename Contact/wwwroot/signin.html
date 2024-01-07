@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign in - Contact</title>
-    <script src="/scripts/signin.js" defer></script>
   </head>
   <body>
     <main>
@@ -27,11 +26,32 @@
         <label for="isPersistent">Remember me</label>
         <button type="submit">Sign in</button>
       </form>
-      <div id="errors" hidden>
-        Errors:
-        <ul></ul>
-      </div>
+      <p hidden>Username or password is incorrect.</p>
       <p>New to Contact? <a href="/signup.html">Create an account</a></p>
     </main>
+    <script>
+      const form = document.querySelector("form");
+      const error = form.nextElementSibling;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch("/Identity/signin", {
+            method: "POST",
+            body: new URLSearchParams(new FormData(form)),
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+          if (response.ok) {
+            window.location = "/";
+          } else {
+            error.removeAttribute("hidden");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    </script>
   </body>
 </html>
