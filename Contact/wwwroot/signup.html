@@ -10,38 +10,22 @@
     <main>
       <h1>Create a Contact account</h1>
       <form>
-        <ul>
-          <li>
-            <label for="username">Username</label>
-          </li>
-          <li>
-            <input type="text" id="username" name="username" required />
-          </li>
-          <li>
-            <label for="password">Password</label>
-          </li>
-          <li>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              minlength="6" />
-          </li>
-          <li>
-            <label for="confirm-password">Confirm password</label>
-          </li>
-          <li>
-            <input type="password" id="confirm-password" required />
-          </li>
-          <li id="errors" hidden>
-            Errors:
-            <ul></ul>
-          </li>
-          <li>
-            <button type="submit">Sign up</button>
-          </li>
-        </ul>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required />
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          minlength="6" />
+        <label for="confirm-password">Confirm password</label>
+        <input type="password" id="confirm-password" required />
+        <div id="errors" hidden>
+          Errors:
+          <ul></ul>
+        </div>
+        <button type="submit">Sign up</button>
       </form>
       <p>Already have an account? <a href="/signin.html">Sign in</a></p>
     </main>
