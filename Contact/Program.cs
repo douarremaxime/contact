@@ -16,16 +16,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-var options = new DefaultFilesOptions();
-options.DefaultFileNames[0] = "chats.html";
-app.UseDefaultFiles(options);
-
-app.UseStaticFiles();
 
 app.MapControllers();
 
