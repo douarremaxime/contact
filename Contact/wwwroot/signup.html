@@ -9,7 +9,7 @@
   <body>
     <main>
       <h1>Create a Contact account</h1>
-      <form id="form">
+      <form>
         <ul>
           <li>
             <label for="username">Username</label>
@@ -28,9 +28,15 @@
               required
               minlength="6" />
           </li>
+          <li>
+            <label for="confirm-password">Confirm password</label>
+          </li>
+          <li>
+            <input type="password" id="confirm-password" required />
+          </li>
           <li id="errors-wrapper" hidden>
             Errors:
-            <ul id="errors-list"></ul>
+            <ul></ul>
           </li>
           <li>
             <button type="submit">Sign up</button>
