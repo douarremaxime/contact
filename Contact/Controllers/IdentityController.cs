@@ -149,7 +149,7 @@ namespace Contact.Controllers
 
             await signInManager.SignOutAsync();
 
-            return NoContent();
+            return Redirect("/signin.html");
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Contact.Controllers
         {
             await signInManager.SignOutAsync();
 
-            return NoContent();
+            return Redirect("/signin.html");
         }
 
         /// <summary>

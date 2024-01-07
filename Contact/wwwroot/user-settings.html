@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User settings - Contact</title>
+  </head>
+  <body>
+    <main>
+      <h1>User settings</h1>
+      <h2>Change username</h2>
+      <p>Changing your username will sign out your other devices.</p>
+      <a href="/change-username.html">Change username</a>
+      <h2>Change password</h2>
+      <p>Changing your password will sign out your other devices.</p>
+      <a href="/change-password.html">Change password</a>
+      <h2>Sign out</h2>
+      <form action="/Identity/signout" method="post">
+        <button type="submit">Sign out</button>
+      </form>
+      <h2>Sign out all devices</h2>
+      <form action="/Identity/signout-all" method="post">
+        <button type="submit">Sign out all</button>
+      </form>
+      <h2>Delete account</h2>
+      <p>Deleting your account is irreversible.</p>
+      <a href="/delete-account.html">Delete account</a>
+    </main>
+  </body>
+</html>
