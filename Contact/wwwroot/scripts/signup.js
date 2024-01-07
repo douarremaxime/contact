@@ -20,6 +20,9 @@ form.addEventListener("submit", async (event) => {
     const response = await fetch("/Identity/signup", {
       method: "POST",
       body: new URLSearchParams(new FormData(form)),
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
     });
     if (response.ok) {
       window.location = "/signup-successful.html";

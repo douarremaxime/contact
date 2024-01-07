@@ -9,6 +9,9 @@ form.addEventListener("submit", async (event) => {
     const response = await fetch("/Identity/signin", {
       method: "POST",
       body: new URLSearchParams(new FormData(form)),
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
     });
     if (response.ok) {
       window.location = "/";
