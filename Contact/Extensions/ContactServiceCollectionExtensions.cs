@@ -28,6 +28,12 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.Cookie.SameSite = SameSiteMode.Strict;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        context.Response.Headers.Location = context.RedirectUri;
+                        context.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    };
                     options.Events.OnRedirectToReturnUrl = context =>
                     {
                         context.Response.Headers.Location = context.RedirectUri;
