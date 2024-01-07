@@ -8,15 +8,10 @@ form.addEventListener("submit", async (event) => {
       method: "POST",
       body: new URLSearchParams(new FormData(form)),
     });
-    switch (response.status) {
-      case 204:
-        window.location = "/";
-        break;
-      case 401:
-        errorsWrapper.removeAttribute("hidden");
-        break;
-      default:
-        throw new Error(`Unexpected status code: ${response.status}`);
+    if (response.ok) {
+      window.location = "/";
+    } else {
+      errorsWrapper.removeAttribute("hidden");
     }
   } catch (e) {
     console.error(e);
