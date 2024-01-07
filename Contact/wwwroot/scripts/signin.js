@@ -1,5 +1,5 @@
 const form = document.querySelector("form");
-const errors = document.querySelector("#errors");
+const errorsWrapper = document.querySelector("#errors");
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -11,7 +11,7 @@ form.addEventListener("submit", async (event) => {
     if (response.ok) {
       window.location = "/";
     } else {
-      errors.removeAttribute("hidden");
+      errorsWrapper.removeAttribute("hidden");
     }
   } catch (e) {
     console.error(e);

@@ -3,8 +3,8 @@ const form = document.querySelector("form");
 const password = document.querySelector("#password");
 const confirmPassword = document.querySelector("#confirm-password");
 
-const errors = document.querySelector("#errors");
-const errorsList = errors.querySelector("ul");
+const errorsWrapper = document.querySelector("#errors");
+const errorsList = errorsWrapper.querySelector("ul");
 
 confirmPassword.addEventListener("input", () => {
   if (confirmPassword.value !== password.value) {
@@ -31,7 +31,7 @@ form.addEventListener("submit", async (event) => {
         return li;
       });
       errorsList.replaceChildren(...errors);
-      errors.removeAttribute("hidden");
+      errorsWrapper.removeAttribute("hidden");
     }
   } catch (e) {
     console.error(e);
