@@ -1,5 +1,5 @@
 const form = document.querySelector("form");
-const errorsWrapper = document.querySelector("#errors-wrapper");
+const errorsWrapper = document.querySelector("#errors");
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

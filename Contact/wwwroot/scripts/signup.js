@@ -3,7 +3,7 @@ const form = document.querySelector("form");
 const password = document.querySelector("#password");
 const confirmPassword = document.querySelector("#confirm-password");
 
-const errorsWrapper = document.querySelector("#errors-wrapper");
+const errorsWrapper = document.querySelector("#errors");
 const errorsList = errorsWrapper.querySelector("ul");
 
 confirmPassword.addEventListener("input", () => {
