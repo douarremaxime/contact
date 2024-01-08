@@ -52,14 +52,12 @@
             },
           });
           if (response.ok) {
-            window.location = "/";
+            window.location = "/signup-successful.html";
           } else {
             const result = await response.json();
-
             const title = document.createElement("p");
             title.textContent = result.title;
             errorWrapper.replaceChildren(title);
-
             if (Object.hasOwn(result, "errors")) {
               const errorList = document.createElement("ul");
               const errors = Object.values(result.errors).map((error) => {
@@ -70,7 +68,6 @@
               errorList.append(...errors);
               errorWrapper.appendChild(errorList);
             }
-
             errorWrapper.removeAttribute("hidden");
           }
         } catch (e) {
