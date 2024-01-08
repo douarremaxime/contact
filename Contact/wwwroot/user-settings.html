@@ -15,16 +15,85 @@
       <p>Changing your password will sign out your other devices.</p>
       <a href="/change-password.html">Change password</a>
       <h2>Sign out</h2>
-      <form action="/Identity/signout" method="post">
+      <form>
         <button type="submit">Sign out</button>
       </form>
+      <div hidden>
+        <!-- Server errors. -->
+      </div>
       <h2>Sign out all devices</h2>
-      <form action="/Identity/signout-all" method="post">
+      <form>
         <button type="submit">Sign out all</button>
       </form>
+      <div hidden>
+        <!-- Server errors. -->
+      </div>
       <h2>Delete account</h2>
       <p>Deleting your account is irreversible.</p>
       <a href="/delete-account.html">Delete account</a>
     </main>
+    <script>
+      const forms = document.querySelectorAll("form");
+      const signoutForm = forms.item(0);
+      const signoutErrors = signoutForm.nextElementSibling;
+      const signoutAllForm = forms.item(1);
+      const signoutAllErrors = signoutAllForm.nextElementSibling;
+
+      async function displayServerErrorsAsync(response, errorWrapper) {
+        const result = await response.json();
+        const title = document.createElement("p");
+        title.textContent = result.title;
+        errorWrapper.replaceChildren(title);
+        if (Object.hasOwn(result, "errors")) {
+          const errorList = document.createElement("ul");
+          const errors = Object.values(result.errors).map((error) => {
+            const li = document.createElement("li");
+            li.textContent = error[0];
+            return li;
+          });
+          errorList.append(...errors);
+          errorWrapper.appendChild(errorList);
+        }
+        errorWrapper.removeAttribute("hidden");
+      }
+
+      signoutForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch("/Identity/signout", {
+            method: "POST",
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+          if (response.ok) {
+            window.location = "/signin.html";
+          } else {
+            await displayServerErrorsAsync(response, signoutErrors);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      signoutAllForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch("/Identity/signout-all", {
+            method: "POST",
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+          if (response.ok) {
+            windows.location = "/signin.html";
+          } else {
+            await displayServerErrorsAsync(response, signoutAllErrors);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    </script>
   </body>
 </html>
