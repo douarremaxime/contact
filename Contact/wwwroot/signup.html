@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign up - Contact</title>
-    <script src="/scripts/signup.js" defer></script>
   </head>
   <body>
     <main>
@@ -23,11 +22,63 @@
         <input type="password" id="confirm-password" required />
         <button type="submit">Sign up</button>
       </form>
-      <div id="errors" hidden>
-        Errors:
-        <ul></ul>
+      <div hidden>
+        <!-- Server errors. -->
       </div>
       <p>Already have an account? <a href="/signin.html">Sign in</a></p>
     </main>
+    <script>
+      const form = document.querySelector("form");
+
+      const password = form.querySelector("#password");
+      const confirmPassword = form.querySelector("#confirm-password");
+
+      const errorWrapper = form.nextElementSibling;
+
+      confirmPassword.addEventListener("input", () => {
+        if (confirmPassword.value !== password.value) {
+          confirmPassword.setCustomValidity("Passwords do not match.");
+        } else {
+          confirmPassword.setCustomValidity("");
+        }
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch("/Identity/signup", {
+            method: "POST",
+            body: new URLSearchParams(new FormData(form)),
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+          if (response.ok) {
+            window.location = "/";
+          } else {
+            const result = await response.json();
+
+            const title = document.createElement("p");
+            title.textContent = result.title;
+            errorWrapper.replaceChildren(title);
+
+            if (Object.hasOwn(result, "errors")) {
+              const errorList = document.createElement("ul");
+              const errors = Object.values(result.errors).map((error) => {
+                const li = document.createElement("li");
+                li.textContent = error[0];
+                return li;
+              });
+              errorList.append(...errors);
+              errorWrapper.appendChild(errorList);
+            }
+
+            errorWrapper.removeAttribute("hidden");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    </script>
   </body>
 </html>
