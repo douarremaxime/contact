@@ -29,11 +29,9 @@
     </main>
     <script>
       const form = document.querySelector("form");
-
+      const errorWrapper = form.nextElementSibling;
       const password = form.querySelector("#password");
       const confirmPassword = form.querySelector("#confirm-password");
-
-      const errorWrapper = form.nextElementSibling;
 
       confirmPassword.addEventListener("input", () => {
         if (confirmPassword.value !== password.value) {
