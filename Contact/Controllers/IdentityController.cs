@@ -38,17 +38,7 @@ namespace Contact.Controllers
                 request.NewPassword);
 
             if (!result.Succeeded)
-                return ValidationProblem(
-                    result.Errors.Aggregate(
-                        seed: new ModelStateDictionary(),
-                        func: (errorDictionary, error) =>
-                        {
-                            errorDictionary.AddModelError(
-                                error.Code,
-                                error.Description);
-
-                            return errorDictionary;
-                        }));
+                return IdentityProblem(result);
 
             await signInManager.RefreshSignInAsync(user);
 
@@ -78,17 +68,7 @@ namespace Contact.Controllers
                 request.NewUsername);
 
             if (!result.Succeeded)
-                return ValidationProblem(
-                    result.Errors.Aggregate(
-                        seed: new ModelStateDictionary(),
-                        func: (errorDictionary, error) =>
-                        {
-                            errorDictionary.AddModelError(
-                                error.Code,
-                                error.Description);
-
-                            return errorDictionary;
-                        }));
+                return IdentityProblem(result);
 
             await signInManager.RefreshSignInAsync(user);
 
@@ -113,17 +93,7 @@ namespace Contact.Controllers
             var result = await userManager.DeleteAsync(user);
 
             if (!result.Succeeded)
-                return ValidationProblem(
-                    result.Errors.Aggregate(
-                        seed: new ModelStateDictionary(),
-                        func: (errorDictionary, error) =>
-                        {
-                            errorDictionary.AddModelError(
-                                error.Code,
-                                error.Description);
-
-                            return errorDictionary;
-                        }));
+                return IdentityProblem(result);
 
             await signInManager.SignOutAsync();
 
@@ -173,17 +143,7 @@ namespace Contact.Controllers
             var result = await userManager.UpdateSecurityStampAsync(user);
 
             if (!result.Succeeded)
-                return ValidationProblem(
-                    result.Errors.Aggregate(
-                        seed: new ModelStateDictionary(),
-                        func: (errorDictionary, error) =>
-                        {
-                            errorDictionary.AddModelError(
-                                error.Code,
-                                error.Description);
-
-                            return errorDictionary;
-                        }));
+                return IdentityProblem(result);
 
             await signInManager.SignOutAsync();
 
@@ -224,19 +184,27 @@ namespace Contact.Controllers
                 request.Password);
 
             if (!result.Succeeded)
-                return ValidationProblem(
-                    result.Errors.Aggregate(
-                        seed: new ModelStateDictionary(),
-                        func: (errorDictionary, error) =>
-                        {
-                            errorDictionary.AddModelError(
-                                error.Code,
-                                error.Description);
-
-                            return errorDictionary;
-                        }));
+                return IdentityProblem(result);
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Projects an identity result into a problem details.
+        /// </summary>
+        /// <param name="result">Identity result.</param>
+        /// <returns>The created <see cref="BadRequestObjectResult"/> for the response.</returns>
+        private ActionResult IdentityProblem(IdentityResult result) =>
+            ValidationProblem(
+                result.Errors.Aggregate(
+                    seed: new ModelStateDictionary(),
+                    func: (errorDictionary, error) =>
+                    {
+                        errorDictionary.AddModelError(
+                            error.Code,
+                            error.Description);
+
+                        return errorDictionary;
+                    }));
     }
 }
