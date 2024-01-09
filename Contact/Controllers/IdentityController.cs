@@ -1,4 +1,5 @@
-﻿using Contact.Requests;
+﻿using Contact.Exceptions;
+using Contact.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,8 @@ namespace Contact.Controllers
             [FromServices] UserManager<IdentityUser<long>> userManager,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-
-            if (user is null)
-                return NotFound();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.ChangePasswordAsync(
                 user,
@@ -69,10 +68,8 @@ namespace Contact.Controllers
             [FromServices] UserManager<IdentityUser<long>> userManager,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-
-            if (user is null)
-                return NotFound();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.SetUserNameAsync(
                 user,
@@ -132,10 +129,8 @@ namespace Contact.Controllers
             [FromServices] UserManager<IdentityUser<long>> userManager,
             [FromServices] SignInManager<IdentityUser<long>> signInManager)
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-
-            if (user is null)
-                return NotFound();
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
 
             var result = await userManager.UpdateSecurityStampAsync(user);
 
