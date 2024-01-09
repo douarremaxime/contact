@@ -21,6 +21,7 @@ namespace Contact.Controllers
         /// <param name="userManager">User manager.</param>
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
+        /// <exception cref="UserNotFoundException">User was not found.</exception>
         [HttpPost("change-password")]
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<ActionResult> ChangePasswordAsync(
@@ -61,6 +62,7 @@ namespace Contact.Controllers
         /// <param name="userManager">User manager.</param>
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
+        /// <exception cref="UserNotFoundException">User was not found.</exception>
         [HttpPost("change-username")]
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<ActionResult> ChangeUsernameAsync(
@@ -89,6 +91,41 @@ namespace Contact.Controllers
                         }));
 
             await signInManager.RefreshSignInAsync(user);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Deletes a user.
+        /// </summary>
+        /// <param name="userManager">User manager.</param>
+        /// <param name="signInManager">Sign in manager.</param>
+        /// <returns>An action result.</returns>
+        /// <exception cref="UserNotFoundException">User was not found.</exception>
+        [HttpPost("delete")]
+        public async Task<ActionResult> DeleteAsync(
+            [FromServices] UserManager<IdentityUser<long>> userManager,
+            [FromServices] SignInManager<IdentityUser<long>> signInManager)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
+
+            var result = await userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+                return ValidationProblem(
+                    result.Errors.Aggregate(
+                        seed: new ModelStateDictionary(),
+                        func: (errorDictionary, error) =>
+                        {
+                            errorDictionary.AddModelError(
+                                error.Code,
+                                error.Description);
+
+                            return errorDictionary;
+                        }));
+
+            await signInManager.SignOutAsync();
 
             return NoContent();
         }
@@ -124,6 +161,7 @@ namespace Contact.Controllers
         /// <param name="userManager">User manager.</param>
         /// <param name="signInManager">Sign in manager.</param>
         /// <returns>An action result.</returns>
+        /// <exception cref="UserNotFoundException">User was not found.</exception>
         [HttpPost("signout-all")]
         public async Task<ActionResult> SignOutAllDevicesAsync(
             [FromServices] UserManager<IdentityUser<long>> userManager,
