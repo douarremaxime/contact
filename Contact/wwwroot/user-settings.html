@@ -18,16 +18,16 @@
       <form>
         <button type="submit">Sign out</button>
       </form>
-      <div hidden>
+      <p hidden>
         <!-- Server errors. -->
-      </div>
+      </p>
       <h2>Sign out all devices</h2>
       <form>
         <button type="submit">Sign out all</button>
       </form>
-      <div hidden>
+      <p hidden>
         <!-- Server errors. -->
-      </div>
+      </p>
       <h2>Delete account</h2>
       <p>Deleting your account is irreversible.</p>
       <a href="/delete-account.html">Delete account</a>
@@ -38,24 +38,6 @@
       const signoutErrors = signoutForm.nextElementSibling;
       const signoutAllForm = forms.item(1);
       const signoutAllErrors = signoutAllForm.nextElementSibling;
-
-      async function displayServerErrorsAsync(response, errorWrapper) {
-        const result = await response.json();
-        const title = document.createElement("p");
-        title.textContent = result.title;
-        errorWrapper.replaceChildren(title);
-        if (Object.hasOwn(result, "errors")) {
-          const errorList = document.createElement("ul");
-          const errors = Object.values(result.errors).map((error) => {
-            const li = document.createElement("li");
-            li.textContent = error[0];
-            return li;
-          });
-          errorList.append(...errors);
-          errorWrapper.appendChild(errorList);
-        }
-        errorWrapper.removeAttribute("hidden");
-      }
 
       signoutForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -69,7 +51,9 @@
           if (response.ok) {
             window.location = "/signin.html";
           } else {
-            await displayServerErrorsAsync(response, signoutErrors);
+            const result = await response.json();
+            signoutErrors.textContent = result.title;
+            signoutErrors.removeAttribute("hidden");
           }
         } catch (e) {
           console.error(e);
@@ -88,7 +72,9 @@
           if (response.ok) {
             windows.location = "/signin.html";
           } else {
-            await displayServerErrorsAsync(response, signoutAllErrors);
+            const result = await response.json();
+            signoutAllErrors.textContent = result.title;
+            signoutAllErrors.removeAttribute("hidden");
           }
         } catch (e) {
           console.error(e);
