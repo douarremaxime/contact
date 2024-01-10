@@ -15,7 +15,7 @@ namespace Contact.Controllers
     public class IdentityController : ControllerBase
     {
         /// <summary>
-        /// Changes the password of a user.
+        /// Changes the password of the user.
         /// </summary>
         /// <param name="request">Change password request.</param>
         /// <param name="userManager">User manager.</param>
@@ -46,7 +46,7 @@ namespace Contact.Controllers
         }
 
         /// <summary>
-        /// Changes the username of a user.
+        /// Changes the username of the user.
         /// </summary>
         /// <param name="request">Change username request.</param>
         /// <param name="userManager">User manager.</param>
@@ -76,7 +76,7 @@ namespace Contact.Controllers
         }
 
         /// <summary>
-        /// Deletes a user.
+        /// Deletes the user.
         /// </summary>
         /// <param name="userManager">User manager.</param>
         /// <param name="signInManager">Sign in manager.</param>
@@ -98,6 +98,26 @@ namespace Contact.Controllers
             await signInManager.SignOutAsync();
 
             return NoContent();
+        }
+
+        /// <summary>
+        /// Returns the username of the user.
+        /// </summary>
+        /// <param name="userManager">User manager.</param>
+        /// <returns>An action result.</returns>
+        /// <exception cref="UserNotFoundException">User was not found.</exception>
+        /// <exception cref="NullUsernameException">User does not have a username.</exception>
+        [HttpGet("username")]
+        public async Task<ActionResult> GetUsernameAsync(
+            [FromServices] UserManager<IdentityUser<long>> userManager)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User)
+                ?? throw new UserNotFoundException();
+
+            var username = await userManager.GetUserNameAsync(user)
+                ?? throw new NullUsernameException();
+
+            return Ok(username);
         }
 
         /// <summary>
