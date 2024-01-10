@@ -18,8 +18,8 @@
           name="password"
           required
           minlength="6" />
-        <label for="confirm-password">Confirm password</label>
-        <input type="password" id="confirm-password" required />
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" required />
         <button type="submit">Sign up</button>
       </form>
       <div hidden>
@@ -31,7 +31,7 @@
       const form = document.querySelector("form");
       const errorWrapper = form.nextElementSibling;
       const password = form.querySelector("#password");
-      const confirmPassword = form.querySelector("#confirm-password");
+      const confirmPassword = form.querySelector("#confirmPassword");
 
       confirmPassword.addEventListener("input", () => {
         if (confirmPassword.value !== password.value) {
