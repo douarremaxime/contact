@@ -25,9 +25,9 @@
       <form>
         <button type="submit">Sign out all</button>
       </form>
-      <p hidden>
+      <div hidden>
         <!-- Server errors. -->
-      </p>
+      </div>
       <h2>Delete account</h2>
       <p>Deleting your account is irreversible.</p>
       <a href="/delete-account.html">Delete account</a>
@@ -73,7 +73,19 @@
             windows.location = "/signin.html";
           } else {
             const result = await response.json();
-            signoutAllErrors.textContent = result.title;
+            const title = document.createElement("p");
+            title.textContent = result.title;
+            signoutAllErrors.replaceChildren(title);
+            if (Object.hasOwn(result, "errors")) {
+              const errorList = document.createElement("ul");
+              const errors = Object.values(result.errors).map((error) => {
+                const li = document.createElement("li");
+                li.textContent = error[0];
+                return li;
+              });
+              errorList.append(...errors);
+              signoutAllErrors.appendChild(errorList);
+            }
             signoutAllErrors.removeAttribute("hidden");
           }
         } catch (e) {
