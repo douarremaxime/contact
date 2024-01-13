@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User settings - Contact</title>
+    <script src="/scripts/user-settings.js" defer></script>
   </head>
   <body>
     <header>
@@ -16,6 +17,14 @@
         <ul>
           <li><a href="/">Chats</a></li>
           <li><a href="/user-settings.html">User settings</a></li>
+          <li>
+            <form>
+              <button type="submit">Sign out</button>
+            </form>
+            <p hidden>
+              <!-- Server errors. -->
+            </p>
+          </li>
         </ul>
       </nav>
     </header>
@@ -23,92 +32,21 @@
       <h1>User settings</h1>
       <ul>
         <li>
-          <button>Change username</button>
+          <a href="/change-display-name.html">Change display name</a>
         </li>
         <li>
-          <button>Change password</button>
+          <a href="/change-username.html">Change username</a>
         </li>
         <li>
-          <form>
-            <button type="submit">Sign out</button>
-          </form>
-          <p hidden>
-            <!-- Server errors. -->
-          </p>
+          <a href="/change-password.html">Change password</a>
         </li>
         <li>
-          <form>
-            <button type="submit">Sign out all devices</button>
-          </form>
-          <div hidden>
-            <!-- Server errors. -->
-          </div>
+          <a href="/signout-all.html">Sign out all devices</a>
         </li>
         <li>
-          <button>Delete account</button>
+          <a href="/delete-account.html">Delete account</a>
         </li>
       </ul>
     </main>
-    <script>
-      const forms = document.querySelectorAll("form");
-      const signoutForm = forms.item(0);
-      const signoutErrors = signoutForm.nextElementSibling;
-      const signoutAllForm = forms.item(1);
-      const signoutAllErrors = signoutAllForm.nextElementSibling;
-
-      signoutForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        try {
-          const response = await fetch("/api/Identity/signout", {
-            method: "POST",
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-            },
-          });
-          if (response.ok) {
-            window.location = "/signin.html";
-          } else {
-            const result = await response.json();
-            signoutErrors.textContent = result.title;
-            signoutErrors.removeAttribute("hidden");
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      });
-
-      signoutAllForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        try {
-          const response = await fetch("/api/Identity/signout-all", {
-            method: "POST",
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-            },
-          });
-          if (response.ok) {
-            windows.location = "/signin.html";
-          } else {
-            const result = await response.json();
-            const title = document.createElement("p");
-            title.textContent = result.title;
-            signoutAllErrors.replaceChildren(title);
-            if (Object.hasOwn(result, "errors")) {
-              const errorList = document.createElement("ul");
-              const errors = Object.values(result.errors).map((error) => {
-                const li = document.createElement("li");
-                li.textContent = error[0];
-                return li;
-              });
-              errorList.append(...errors);
-              signoutAllErrors.appendChild(errorList);
-            }
-            signoutAllErrors.removeAttribute("hidden");
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      });
-    </script>
   </body>
 </html>
