@@ -21,39 +21,33 @@
     </header>
     <main>
       <h1>User settings</h1>
-      <section>
-        <h2>Change username</h2>
-        <p>Changing your username will sign out your other devices.</p>
-        <div><a href="/change-username.html">Change username</a></div>
-      </section>
-      <section>
-        <h2>Change password</h2>
-        <p>Changing your password will sign out your other devices.</p>
-        <div><a href="/change-password.html">Change password</a></div>
-      </section>
-      <section>
-        <h2>Sign out</h2>
-        <form>
-          <button type="submit">Sign out</button>
-        </form>
-        <p hidden>
-          <!-- Server errors. -->
-        </p>
-      </section>
-      <section>
-        <h2>Sign out all devices</h2>
-        <form>
-          <button type="submit">Sign out all</button>
-        </form>
-        <div hidden>
-          <!-- Server errors. -->
-        </div>
-      </section>
-      <section>
-        <h2>Delete account</h2>
-        <p>Deleting your account is irreversible.</p>
-        <div><a href="/delete-account.html">Delete account</a></div>
-      </section>
+      <ul>
+        <li>
+          <button>Change username</button>
+        </li>
+        <li>
+          <button>Change password</button>
+        </li>
+        <li>
+          <form>
+            <button type="submit">Sign out</button>
+          </form>
+          <p hidden>
+            <!-- Server errors. -->
+          </p>
+        </li>
+        <li>
+          <form>
+            <button type="submit">Sign out all devices</button>
+          </form>
+          <div hidden>
+            <!-- Server errors. -->
+          </div>
+        </li>
+        <li>
+          <button>Delete account</button>
+        </li>
+      </ul>
     </main>
     <script>
       const forms = document.querySelectorAll("form");
