@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="51.98719mm"
+   height="12.280383mm"
+   viewBox="0 0 51.98719 12.280383"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-93.963129,-93.556047)">
+    <path
+       id="path1"
+       style="fill:#1b1b1b;fill-opacity:1;stroke-width:0.28302"
+       d="m 101.0021,93.556047 c -3.605249,-1.6e-5 -6.527862,2.749074 -6.527763,6.140193 0.0031,0.70646 0.135819,1.40626 0.391389,2.06878 0.0679,0.17603 0.07852,0.45833 0.01244,0.63508 l -0.437938,1.17136 -0.459473,1.22954 a 0.27856654,0.27856654 50.488162 0 0 0.306986,0.37225 l 1.29402,-0.21687 1.197416,-0.20038 c 0.24255,-0.0406 0.603703,0.0396 0.816258,0.16317 1.021394,0.5939 2.200023,0.91279 3.406663,0.91726 3.60505,-2.5e-4 6.52735,-2.74926 6.52725,-6.14019 1e-4,-3.39093 -2.9222,-6.139942 -6.52725,-6.140193 z" />
+    <text
+       xml:space="preserve"
+       style="font-size:12.7px;fill:#000000;stroke-width:0.264583"
+       x="96.440887"
+       y="104.24174"
+       id="text1"><tspan
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.7px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         x="96.440887"
+         y="104.24174">C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.7px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#1b1b1b;fill-opacity:1;stroke-width:0.264583"
+       x="108.00535"
+       y="104.24107"
+       id="text2"><tspan
+         id="tspan2"
+         style="fill:#1b1b1b;fill-opacity:1;stroke-width:0.264583"
+         x="108.00535"
+         y="104.24107">ontact</tspan></text>
+  </g>
+</svg>
