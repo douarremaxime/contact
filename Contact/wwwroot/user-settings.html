@@ -6,31 +6,50 @@
     <title>User settings - Contact</title>
   </head>
   <body>
+    <header>
+      <img src="/images/logo.svg" alt="Contact logo" width="189" height="46" />
+      <nav>
+        <ul>
+          <li><a href="/">Chats</a></li>
+          <li><a href="/user-settings.html">User settings</a></li>
+        </ul>
+      </nav>
+    </header>
     <main>
       <h1>User settings</h1>
-      <h2>Change username</h2>
-      <p>Changing your username will sign out your other devices.</p>
-      <a href="/change-username.html">Change username</a>
-      <h2>Change password</h2>
-      <p>Changing your password will sign out your other devices.</p>
-      <a href="/change-password.html">Change password</a>
-      <h2>Sign out</h2>
-      <form>
-        <button type="submit">Sign out</button>
-      </form>
-      <p hidden>
-        <!-- Server errors. -->
-      </p>
-      <h2>Sign out all devices</h2>
-      <form>
-        <button type="submit">Sign out all</button>
-      </form>
-      <div hidden>
-        <!-- Server errors. -->
-      </div>
-      <h2>Delete account</h2>
-      <p>Deleting your account is irreversible.</p>
-      <a href="/delete-account.html">Delete account</a>
+      <section>
+        <h2>Change username</h2>
+        <p>Changing your username will sign out your other devices.</p>
+        <div><a href="/change-username.html">Change username</a></div>
+      </section>
+      <section>
+        <h2>Change password</h2>
+        <p>Changing your password will sign out your other devices.</p>
+        <div><a href="/change-password.html">Change password</a></div>
+      </section>
+      <section>
+        <h2>Sign out</h2>
+        <form>
+          <button type="submit">Sign out</button>
+        </form>
+        <p hidden>
+          <!-- Server errors. -->
+        </p>
+      </section>
+      <section>
+        <h2>Sign out all devices</h2>
+        <form>
+          <button type="submit">Sign out all</button>
+        </form>
+        <div hidden>
+          <!-- Server errors. -->
+        </div>
+      </section>
+      <section>
+        <h2>Delete account</h2>
+        <p>Deleting your account is irreversible.</p>
+        <div><a href="/delete-account.html">Delete account</a></div>
+      </section>
     </main>
     <script>
       const forms = document.querySelectorAll("form");
