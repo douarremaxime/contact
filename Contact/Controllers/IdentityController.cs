@@ -11,7 +11,7 @@ namespace Contact.Controllers
     /// Identity controller.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class IdentityController : ControllerBase
     {
         /// <summary>
