@@ -25,7 +25,7 @@ form.addEventListener("submit", async (event) => {
           return li;
         });
         errorList.append(...errors);
-        errors.appendChild(errorList);
+        errorWrapper.appendChild(errorList);
       }
       errorWrapper.removeAttribute("hidden");
     }
