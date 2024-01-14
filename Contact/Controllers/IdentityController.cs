@@ -140,7 +140,9 @@ namespace Contact.Controllers
                 lockoutOnFailure: false);
 
             if (!result.Succeeded)
-                return Unauthorized();
+                return Problem(
+                    statusCode: 401,
+                    title: "Username or password is incorrect.");
 
             return NoContent();
         }
