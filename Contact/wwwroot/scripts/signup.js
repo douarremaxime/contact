@@ -1,5 +1,4 @@
 const form = document.querySelector("main form");
-const problemDetails = form.nextElementSibling;
 const password = form.querySelector("#password");
 const confirmPassword = form.querySelector("#confirmPassword");
 
@@ -25,7 +24,9 @@ form.addEventListener("submit", async (event) => {
       window.location = "/signup-successful.html";
     } else {
       const result = await response.json();
+      const problemDetails = document.createElement("problem-details");
       problemDetails.setProblemDetails(result);
+      form.after(problemDetails);
     }
   } catch (e) {
     console.error(e);
