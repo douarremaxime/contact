@@ -101,26 +101,6 @@ namespace Contact.Controllers
         }
 
         /// <summary>
-        /// Returns the username of the user.
-        /// </summary>
-        /// <param name="userManager">User manager.</param>
-        /// <returns>An action result.</returns>
-        /// <exception cref="UserNotFoundException">User was not found.</exception>
-        /// <exception cref="NullUsernameException">User does not have a username.</exception>
-        [HttpGet("username")]
-        public async Task<ActionResult> GetUsernameAsync(
-            [FromServices] UserManager<IdentityUser<long>> userManager)
-        {
-            var user = await userManager.GetUserAsync(HttpContext.User)
-                ?? throw new UserNotFoundException();
-
-            var username = await userManager.GetUserNameAsync(user)
-                ?? throw new NullUsernameException();
-
-            return Ok(username);
-        }
-
-        /// <summary>
         /// User sign in.
         /// </summary>
         /// <param name="request">Sign in request.</param>
