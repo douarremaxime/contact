@@ -4,7 +4,7 @@ const problemDetails = form.nextElementSibling;
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    const response = await fetch("api/Identity/signin", {
+    const response = await fetch("/api/Identity/signin", {
       method: "POST",
       body: new URLSearchParams(new FormData(form)),
       headers: {
